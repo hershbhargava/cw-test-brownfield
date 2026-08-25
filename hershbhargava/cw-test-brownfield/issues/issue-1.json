@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "downloaded_at": "2026-08-25T03:59:25.311Z",
+    "downloaded_at": "2026-08-25T19:11:40.456Z",
     "owner": "hershbhargava",
     "repository": "cw-test-brownfield",
     "issue_number": "1",
@@ -21,7 +21,7 @@
     "id": 5241081780,
     "node_id": "I_kwDOUDOaqc8AAAABOGSPtA",
     "number": 1,
-    "title": "Add bulk pricing endpoint",
+    "title": "Add bulk pricing endpoint [refreshed via broker]",
     "user": {
       "login": "hershbhargava",
       "id": 22163465,
@@ -50,7 +50,7 @@
     "milestone": null,
     "comments": 1,
     "created_at": "2026-08-25T01:30:08Z",
-    "updated_at": "2026-08-25T02:17:49Z",
+    "updated_at": "2026-08-25T04:31:43Z",
     "closed_at": null,
     "assignee": null,
     "author_association": "OWNER",
