@@ -1,164 +1,178 @@
 # DEBUG: Final AI Prompt
 
-> **Generated**: 2026-08-25T20:40:24.921Z
-> **Role**: architect-ai
+> **Generated**: 2026-08-25T20:44:07.091Z
+> **Role**: architect-reviewer-ai
 > **Iteration**: 3
-> **CE Studio Context**: YES
-> **CE Studio Tokens**: 2294
-> **Total Characters**: 17358
+> **CE Studio Used**: Yes
+> **Total Characters**: 16795
 
 ---
 
-# ARCHITECTURE DESIGN TASK
+# TDD_DELTA ARCHITECTURE REVIEW TASK
 
-**Primary Issue**: #1
-**All Issues**: 
-**Iteration**: 3
-**Repository**: hershbhargava/cw-test-brownfield
-**Design Mode**: new_application
+You are conducting a systematic REQUIREMENTS COVERAGE review of a Technical Design Document DIFF (TDD_DELTA).
 
----
+## Review Session Information
 
-### Session Context
-
-| Property | Value |
-|----------|-------|
-| Current Iteration | 3 |
-| Session Mode | CONTINUATION |
-| Previous Iterations | 2 |
-| Design Mode | new_application |
-
-**Iteration Behavior:**
-- **Iteration 1 / New Session**: Read all documents completely, generate questionnaire or TDD
-- **Iteration > 1 / Same Session**: Focus on feedback and refinements; use existing knowledge
+- **Repository**: hershbhargava/cw-test-brownfield
+- **Primary Workspace**: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield`
+- **Issues Designed**: #1
+- **Review Iteration**: 3
+- **Review Mode**: TDD_DELTA (Living Documents)
+- **Review Focus**: comprehensive
+- **Gap Analysis File**: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-3/GAP_ANALYSIS.md`
+- **Review Summary File**: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-3/REVIEW_SUMMARY.md`
+- **Is First Review**: false
 
 ---
 
-### Issues for Architecture Design
+## Upstream artifacts to consume (most recent first):
 
-- Issue file: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issues/issue-1.json`
+### api_contracts (generated 2026-08-25T20:42:36.979Z)
+Path: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/API_CONTRACTS.md`
+Directive: Review API surface for completeness, error semantics, versioning.
 
-**IMPORTANT**: Read EACH issue file to understand:
-- Requirements and acceptance criteria
-- User stories and use cases
-- Technical constraints
-- Integration requirements
+**MUST READ FULLY**: Use your Read tool to load the entire file at the path above before proceeding. This document is critical for your task. Do NOT skip.
 
 ---
+
+### tdd (generated 2026-08-25T20:42:22.820Z)
+Path: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/TDD.md`
+Directive: Current architecture spec. Review for correctness against PRD intent.
+
+**MUST READ FULLY**: Use your Read tool to load the entire file at the path above before proceeding. This document is critical for your task. Do NOT skip.
+
+---
+
+### prd (generated 2026-08-25T04:01:32.266Z)
+Path: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/requirements/PRD.md`
+Directive: Product intent anchor. Compare design against requirements.
+
+**MUST READ**: Use your Read tool to load this file. Focus on summary sections (typically near the top). Skim the rest as needed.
+
+---
+
+### deployment_strategy (generated 2026-08-25T01:33:56.313Z)
+Path: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/DEPLOYMENT_STRATEGY.md`
+Directive: Review rollout plan, observability, rollback procedure.
+
+**MUST READ FULLY**: Use your Read tool to load the entire file at the path above before proceeding. This document is critical for your task. Do NOT skip.
+
+---
+
+### security_design (generated 2026-08-25T01:33:40.754Z)
+Path: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/SECURITY_DESIGN.md`
+Directive: Review threat model and mitigations for gaps.
+
+**MUST READ FULLY**: Use your Read tool to load the entire file at the path above before proceeding. This document is critical for your task. Do NOT skip.
+
+---
+
+### system_architecture (generated 2026-08-25T01:32:55.939Z)
+Path: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/SYSTEM_ARCHITECTURE.md`
+Directive: Review component boundaries and deployment topology.
+
+**MUST READ FULLY**: Use your Read tool to load the entire file at the path above before proceeding. This document is critical for your task. Do NOT skip.
+
+---
+
+## [DOC] DOCUMENTS TO READ (LIVING DOCUMENTS IN docs/ FOLDER)
+
+**CRITICAL**: These are LIVING DOCUMENTS stored in the repository's docs/ folder.
+You MUST read these files in order:
+
+### 1. TDD_DELTA (Primary Subject of Review)
+```
+/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/TDD.md
+```
+This is the Technical Design Document DIFF that describes the architecture changes for the feature.
+
+### 2. PRD_DELTA (Requirements Reference)
+```
+/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/requirements/PRD_DELTA_issue-1.md
+```
+This is the Product Requirements Document DIFF that defines what the TDD_DELTA should cover.
+
+### 3. Base TDD (Original Architecture - Optional Reference)
+```
+/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/TDD.md
+```
+
+### 4. Base PRD (Original Requirements - Optional Reference)
+```
+/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/requirements/PRD.md
+```
 
 ### Upstream Design Documents (MUST READ)
 
-The following documents were produced by upstream phases (PRD, etc.).
-You MUST read these documents. They contain the requirements the architecture must address.
+The following documents were produced by upstream phases (PRD, Architecture, etc.).
+You MUST read these documents to verify the architecture against requirements.
 
 - **Backlog** (Phase: backlog, Iteration 1): `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/backlog/iteration-1`
 
 **Document Precedence:** TDD > PRD > Architecture > Other docs
-**IMPORTANT:** Read these documents COMPLETELY before designing the architecture.
-
-### Repository Documentation
-
-No specific documents were provided as input. Before starting, explore the repository documentation directory:
-
-`/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/`
-
-Read any relevant design documents (TDD, PRD, architecture specs) found there before designing. Follow precedence: TDD > PRD > other docs.
-
-### Repository Context
-
-| Property | Value |
-|----------|-------|
-| Repository | hershbhargava/cw-test-brownfield |
-| Workspace | /persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1 |
-| Feature Branch | feature/issue-1 |
-| Base Branch | main |
-| Design Mode | new_application |
+**IMPORTANT:** Read these documents COMPLETELY to verify architecture coverage.
 
 ---
 
-### OUTPUT FILE LOCATIONS
+## [FOLDER] REVIEW ARTIFACTS OUTPUT LOCATION
 
-**Iteration**: 3 of issue #1
+**IMPORTANT**: Review artifacts are GENERATED ARTIFACTS (not living documents).
+They go in the external-memory folder, NOT the docs/ folder.
 
-**IMPORTANT: LIVING DOCUMENTS vs ARTIFACTS**
-
-TDD and TDD_DELTA are **living documents** that must be git tracked in the repository's docs folder.
-Artifacts like FINAL_PROMPT.md, metadata.json are workflow artifacts stored in external-memory.
-
-**Living Documents (git tracked):**
-- TDD.md: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/TDD.md`
-
-**Workflow Artifacts (external-memory):**
+**Review Output Directory**:
 ```
-/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-3/
-├── FINAL_PROMPT.md      # AI prompt (auto-generated)
-├── metadata.json        # Workflow metadata
-└── (other artifacts)
+/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-3
 ```
 
-**CRITICAL - WHERE TO WRITE FILES:**
-1. Write TDD.md to: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/TDD.md`
-2. Write metadata.json to: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-3/metadata.json`
-
-**Files to write (canonical v1.0 contract):**
-1. Write TDD.md to: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/TDD.md` (REQUIRED) — Technical design — living architecture spec for this issue.
-2. Write SYSTEM_ARCHITECTURE.md to: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/SYSTEM_ARCHITECTURE.md` (OPTIONAL) — Component boundaries, deployment topology, key infra decisions.
-3. Write DATABASE_SCHEMA.md to: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/DATABASE_SCHEMA.md` (OPTIONAL) — Tables, indexes, FKs, migration strategy.
-4. Write API_CONTRACTS.md to: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/API_CONTRACTS.md` (OPTIONAL) — Public API surface — request/response shapes, error semantics.
-5. Write SECURITY_DESIGN.md to: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/SECURITY_DESIGN.md` (OPTIONAL) — Threat model, mitigations, secrets handling.
-6. Write DEPLOYMENT_STRATEGY.md to: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/DEPLOYMENT_STRATEGY.md` (OPTIONAL) — Rollout plan, observability, rollback procedure.
-7. Write metadata.json to: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-3/metadata.json` (OPTIONAL) — Run metadata (iteration, status, timings).
-
-Each REQUIRED file MUST be written; absence fails the workflow envelope. OPTIONAL files are write-if-substantive (no skeleton placeholders).
-
-
-**WRONG (DO NOT DO THIS):**
-- Do NOT create nested directories like `external-memory/arch/iteration-N/` inside the artifacts directory
-- Do NOT use relative paths
-- The paths above are COMPLETE - use them exactly as shown
+Create these files:
+- `GAP_ANALYSIS.md` - Detailed gap analysis
+- `REVIEW_SUMMARY.md` - Executive summary
+- `ARCHITECTURE_QUALITY.md` - Quality assessment
+- `metadata.json` - Machine-readable metadata
+- `GITHUB_COMMENT.md` - Comment to post on GitHub issue
 
 ---
 
-### Setup: Verify Paths
+## [REFRESH] INCREMENTAL ARCHITECTURE REVIEW MODE - Iteration 3
 
-1. Verify artifacts directory exists: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-3`
-2. Verify input documents are accessible (PRD, issue files)
-3. Living document will be written to: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/TDD.md`
+**This is NOT the first review.** Previous architecture reviews have already been conducted.
 
----
+### Previous Architecture Review Iterations
 
-### metadata.json Template
-
-```json
-{
-  "iteration": 3,
-  "role": "architect-ai",
-  "status": "completed",
-  "timestamp": "2026-08-25T20:40:23.999Z",
-  "primary_issue": 1,
-  "issues_designed": [],
-  "design_mode": "new_application",
-  "mode": "REFINEMENT",
-  "quality_score": "<calculated>",
-  "files_created": ["<list of all .md files>"],
-  "commit_hash": "<filled_after_commit>",
-  "iteration_mode": "CE_STUDIO"
-}
-```
+**Iteration 2:**
+- GAP_ANALYSIS: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-2/GAP_ANALYSIS.md`
+- REVIEW_SUMMARY: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-2/REVIEW_SUMMARY.md`
+- ARCHITECTURE_QUALITY: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-2/ARCHITECTURE_QUALITY.md`
+- SECURITY_REVIEW: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-2/SECURITY_REVIEW.md`
+- metadata: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-2/metadata.json`
 
 ---
 
-### Commit to Git
+## GIT COMMIT INSTRUCTIONS
 
-After creating all documents:
-1. Use `git add /persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/TDD.md`
-2. Use `git add /persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-3`
-3. Use `git commit -m "Architecture iteration 3 for issue #1"`
-4. Do NOT push yet (workflow will handle that)
+**IMPORTANT**: Only commit the review artifacts in external-memory, NOT the living documents.
+
+1. `git add /persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-3/`
+2. `git commit -m "TDD_DELTA review iteration 3 for issue #1"`
 
 ---
 
-**BEGIN (REFINEMENT mode)**: A complete TDD already exists at `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/TDD.md` and the questionnaire at `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/TDD_Issue-1-QandA.md` has ALREADY been consumed into it. Do NOT re-read the questionnaire and do NOT regenerate the TDD from scratch. Read the existing TDD.md, then make ONLY targeted corrections if you find gaps, inconsistencies, or a stale **API contract**; otherwise leave it intact and confirm completeness in metadata.json. The questionnaire is retained for provenance only.
+## OUTPUT REQUIREMENTS
+
+You MUST:
+1. Read all TDD_DELTA and PRD_DELTA documents completely
+2. Create ALL review documents listed above
+3. Save them to `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-3`
+4. Commit to git
+5. Respond with a summary of your review
+
+**Working Directory**: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield`
+**TDD_DELTA Path**: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/TDD.md`
+**PRD_DELTA Path**: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/requirements/PRD_DELTA_issue-1.md`
+**Review Output Path**: `/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-3`
+
+Start by reading the TDD_DELTA and PRD_DELTA documents, then create the comprehensive architecture review.
 
 
 ---
@@ -261,198 +275,149 @@ No operational details detected.
 
 ## Workflow Context
 
-# Architecture Design: New Feature / Bug Fix (TDD DIFF)
+# Architecture Review: New Feature / Bug Fix (TDD DIFF)
 
-> **Mode**: New Feature or Bug Fix on an existing application
-> **Use Case**: Designing architecture changes for features or fixes in an existing system
-> **Output**: TDD_DELTA.md documenting ONLY the architectural changes
-
----
-
-## Key Principle
-
-You are NOT designing a system from scratch. An existing architecture exists with its own TDD, data model, API contracts, and deployment. Your job is to design the **architectural delta** — what changes, what's added, what existing components are affected.
+> **Mode**: Reviewing a TDD_DELTA for architecture changes to an existing system
+> **Input**: TDD_DELTA.md + PRD_DELTA.md + base TDD.md (reference)
+> **Output**: Gap analysis, quality scores, review summary
 
 ---
 
-## 4-Phase TDD DIFF Process
+## Key Difference from Full TDD Review
 
-### PHASE 1: Understand Existing Architecture
+You are reviewing an **architecture change document**, not a complete system design. The review focus shifts to:
 
-**Objective**: Build a complete mental model of the current system before designing changes.
-
-**Actions**:
-1. Read the existing TDD.md (if available) to understand current architecture
-2. Read the PRD or PRD_DELTA from upstream to understand what changes are needed
-3. If codebase access is available, scan to understand:
-   - Current technology stack and patterns
-   - Existing data models and relationships
-   - Current API surface and contracts
-   - Deployment architecture
-   - Testing patterns in use
-4. Identify the architectural boundaries the change touches
+- **Change completeness**: Are all architectural impacts of the change identified?
+- **Backward compatibility**: Does the change break existing behavior?
+- **Migration feasibility**: Is the migration/rollback plan realistic?
+- **Consistency with existing**: Do the changes fit the existing architecture patterns?
 
 ---
 
-### PHASE 2: Change Impact Analysis
+## TDD DIFF Review Process
 
-**Objective**: Map every architectural component affected by the change.
+### PHASE 1: Read Documents in Order
 
-**Analyze impact across**:
+**CRITICAL**: Read in this specific order:
 
-| Component | Questions to Answer |
-|-----------|-------------------|
-| **Data Model** | New tables/columns? Modified relationships? Migration needed? |
-| **API Surface** | New endpoints? Modified contracts? Breaking changes? Versioning? |
-| **Service Boundaries** | New services? Modified service responsibilities? Changed communication patterns? |
-| **Authentication/Authorization** | New permissions? Modified access control? New roles? |
-| **Infrastructure** | New resources? Changed scaling requirements? New dependencies? |
-| **Security** | New attack surfaces? Changed threat model? Compliance impact? |
-| **Performance** | New bottlenecks? Changed query patterns? Caching invalidation? |
-| **Testing** | New test categories? Modified test infrastructure? |
+1. **TDD_DELTA** (primary subject of review) — the proposed changes
+2. **PRD_DELTA** (requirements reference) — what changes were requested
+3. **Base TDD** (optional reference) — the existing architecture
+4. **Base PRD** (optional reference) — the existing product
 
-For each affected component, document: what changes, why, and what the risk is.
+Build a mental model: existing architecture → proposed changes → affected areas.
 
----
-
-### PHASE 3: TDD DIFF Generation
-
-**Objective**: Generate TDD_DELTA.md with the architectural change specification.
-
-**TDD_DELTA.md Structure**:
-
-1. **Change Summary**
-   - One-paragraph overview of architectural changes
-   - Affected components and boundaries
-   - Complexity assessment (Low / Medium / High)
-
-2. **Existing Architecture Context**
-   - Current state of affected components
-   - References to existing TDD sections
-
-3. **Proposed Architectural Changes**
-   - For each change:
-     - **Component**: Which architectural component
-     - **Change Type**: New / Modified / Extended / Deprecated
-     - **Before**: Current design (reference existing TDD)
-     - **After**: Proposed design
-     - **Rationale**: Why this change is needed
-   - New components (if any) with full design
-   - Modified data models with migration strategy
-   - Modified API contracts with versioning approach
-
-4. **Data Model Changes**
-   - New tables/columns with full schema
-   - Modified tables with before/after comparison
-   - Migration scripts or strategy
-   - Data integrity considerations
-
-5. **API Contract Changes**
-   - New endpoints with full request/response schemas
-   - Modified endpoints with before/after comparison
-   - Backward compatibility approach
-   - API versioning (if breaking changes)
-
-6. **Security Impact**
-   - New permissions or roles
-   - Modified access control rules
-   - New attack surfaces and mitigations
-   - Compliance considerations
-
-7. **Infrastructure Changes**
-   - New resources or services
-   - Modified deployment configuration
-   - Scaling impact
-   - Monitoring/alerting changes
-
-8. **Testing Strategy for Changes**
-   - What specifically needs testing
-   - Regression test areas
-   - New integration test scenarios
-   - Performance benchmarks (before vs after)
-
-9. **Migration & Rollback**
-   - Step-by-step migration plan
-   - Data migration strategy
-   - Feature flag approach (if gradual rollout)
-   - Rollback procedure
-
-10. **Risks and Mitigations**
-    - Architectural risks introduced by the change
-    - Backward compatibility risks
-    - Performance regression risks
-    - Mitigation strategies for each
+**For large documents (>1000 lines)**, use 3-pass reading strategy:
+1. **Pass 1**: Structure scan
+2. **Pass 2**: Detailed read
+3. **Pass 3**: Cross-reference with base TDD
 
 ---
 
-### PHASE 4: Quality Verification
+### PHASE 2-8: DIFF-Specific Review Areas
 
-**Verification Checklist**:
-- [ ] Every affected component identified and documented
-- [ ] Before/after comparison for every modification
-- [ ] Data model changes have migration strategy
-- [ ] API changes address backward compatibility
-- [ ] Security impact analyzed
-- [ ] Testing strategy covers regression risks
-- [ ] Migration plan is reversible (rollback defined)
-- [ ] No full TDD rewrite (only the delta)
-- [ ] Changes are consistent with existing architecture patterns
+| Dimension | What to Evaluate for a DIFF |
+|-----------|----------------------------|
+| **Requirements Coverage** | Does the TDD_DELTA address ALL requirements from the PRD_DELTA? Every requested change mapped to a design? |
+| **Change Completeness** | Are ALL affected components identified? No missing ripple effects? |
+| **Backward Compatibility** | Do changes break existing APIs, data formats, or user workflows? Is versioning addressed? |
+| **Data Migration** | Are schema changes safe? Is migration reversible? Data integrity maintained? |
+| **API Contract Changes** | Are breaking changes documented? Is backward compatibility preserved or versioning applied? |
+| **Security Impact** | Do changes introduce new attack surfaces? Are new permissions modeled? |
+| **Consistency with Base** | Do changes follow the same patterns as the existing architecture? No contradictions? |
+
+For each dimension, score 0-100 and document ALL gaps found.
 
 ---
 
-## Output Artifacts
+### PHASE 9-13: Create Review Documents
 
-| Artifact | Required | Description |
-|----------|----------|-------------|
-| `TDD_DELTA.md` | YES | Architectural change specification |
-| `metadata.json` | YES | Machine-readable metadata |
-| `GITHUB_COMMENT.md` | Optional | Summary for GitHub issue |
+Create ALL of these in the review output directory:
+
+1. **GAP_ANALYSIS.md** — Every gap with DIFF-specific format (see below)
+2. **REVIEW_SUMMARY.md** — Executive summary: overall score, outcome, key findings
+3. **ARCHITECTURE_QUALITY.md** — Per-dimension scoring with evidence
+4. **metadata.json** — Machine-readable scores and gap counts
+5. **GITHUB_COMMENT.md** — Concise summary for the GitHub issue
+
+---
+
+### PHASE 14: Commit to Git
+
+Commit all review artifacts to the repository.
+
+---
+
+## Incremental Review Mode (Iteration > 1)
+
+Same as full TDD review:
+1. Read ALL previous GAP_ANALYSIS.md files
+2. Track gap status (FIXED / PARTIALLY FIXED / NOT FIXED / NEW)
+3. Focus on REMAINING gaps only — never repeat fixed gaps
+
+---
+
+## Gap Analysis Format (DIFF-Specific)
+
+```markdown
+### Gap ID: GAP-DIFF-XXX
+**Status**: [FAIL] NOT FIXED / [NEW] NEW ISSUE
+**Category**: Change Coverage / Backward Compat / Migration / API / Security / Consistency
+**Priority**: CRITICAL / HIGH / MEDIUM / LOW
+**PRD_DELTA Requirement**: What change was requested
+**TDD_DELTA Coverage**: What the design covers (or doesn't)
+**Impact**: What happens if this gap is not addressed
+**Fix Required**: Specific change needed in TDD_DELTA
+```
+
+### DIFF-Specific Gap Patterns to Watch For:
+- Missing impact on existing component (change ripple not identified)
+- No backward compatibility statement for API changes
+- Data migration without rollback plan
+- Schema change without integrity verification
+- New service/component without deployment strategy
+- Security model change without updated threat analysis
+
+---
+
+## Quality Score Criteria
+
+| Score | Rating | Description |
+|-------|--------|-------------|
+| 90-100 | Excellent | Changes well-designed, safe to implement |
+| 70-89 | Good | Minor gaps, can proceed with notes |
+| 50-69 | Fair | Significant gaps in change coverage or migration |
+| Below 50 | Poor | Major gaps — missing impacts or unsafe migration |
 
 ---
 
 ## Quality Standards
 
 ### DO:
-- Read existing TDD before designing changes
-- Document every affected component with before/after
-- Include data migration strategy for schema changes
-- Address backward compatibility explicitly
-- Provide rollback procedure
-- Keep changes minimal — don't redesign what doesn't need to change
-- Use ABSOLUTE paths for all file operations
-- Commit all artifacts to Git
+- Read TDD_DELTA AND base TDD to understand full context
+- Verify every PRD_DELTA requirement has a corresponding design change
+- Check backward compatibility for every modification
+- Verify migration plan is reversible
+- Check that changes follow existing architecture patterns
+- Provide specific fix recommendations for every gap
+- Use absolute paths for file operations
 
 ### DO NOT:
-- Rewrite the full TDD — document only changes
-- Skip impact analysis — changes always have ripple effects
-- Ignore existing architecture patterns — changes should be consistent
-- Add new complexity without justification
-- Skip migration plan for data/API changes
-- Assume "no impact" without analysis — verify and document
+- Review TDD_DELTA in isolation (always read the base TDD)
+- Penalize for not redesigning unchanged parts
+- Accept "no impact" without evidence of analysis
+- Skip migration/rollback review
+- Ignore consistency with existing architecture patterns
+- Provide vague descriptions ("needs work")
 
 ---
 
 ## Critical Instructions
 
-1. **UNDERSTAND EXISTING ARCHITECTURE FIRST**: Read TDD.md and/or codebase before designing changes
-2. **DELTA ONLY**: Never write a full TDD — document only what changes
-3. **IMPACT IS MANDATORY**: Every change affects something — find and document it
-4. **BACKWARD COMPATIBILITY**: Existing users, APIs, and integrations must not break
-5. **MIGRATION AND ROLLBACK**: Every change needs a path forward and a path back
-6. **ABSOLUTE PATHS**: Use absolute paths for ALL file operations
-7. **COMMIT ARTIFACTS**: After creating all files, commit them to git
-
-
----
-<!-- ── stack overlay (nodejs) appended to the base context ── -->
-
-# architect-design-workflow — Node.js/TypeScript: New Feature Or Bug Fix
-
-> **Pack**: `nodejs` (build_target: container-service, extends: sdlc) — the stack is **Node.js/TypeScript** by pack identity.
-> **Composes**: stack = *Node.js/TypeScript* (pack identity) ⊕ change-type = *new-feature-or-bug-fix*
-> **Role**: Architect
-
----
-
-## Node.js architecture DELTA (TDD_DELTA)
-Design only the change: new/changed endpoints + DTOs, affected services/repositories, an additive (reversible) migration if the data model changes, authz scope changes, integration impact. Reuse the existing framework/layering/error-envelope — no re-architecture. Amend `.coweave/manifest.yml` only if the test surface changes.
+1. **READ IN ORDER**: TDD_DELTA → PRD_DELTA → Base TDD → Base PRD
+2. **CHANGE COVERAGE IS #1**: The primary job is catching missed impacts
+3. **BACKWARD COMPATIBILITY**: Every API/data change needs compatibility analysis
+4. **MIGRATION PLAN**: Every schema change needs a reversible migration path
+5. **INCREMENTAL MODE**: For iteration > 1, focus on remaining gaps only
+6. **CREATE ALL ARTIFACTS**: All 5 output files are mandatory
+7. **COMMIT TO GIT**: Review artifacts must be committed
