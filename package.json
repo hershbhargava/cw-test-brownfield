@@ -1,0 +1,11 @@
+{
+  "name": "widget-service",
+  "version": "1.2.0",
+  "description": "Existing internal widget pricing service",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "node --test src/"
+  },
+  "dependencies": { "express": "^4.19.2" }
+}
