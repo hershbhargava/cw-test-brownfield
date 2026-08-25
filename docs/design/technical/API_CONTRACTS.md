@@ -65,6 +65,47 @@ app.get('/price', (req, res) => {
 });
 ```
 
+---
+
+### 3. `GET /price/bulk` *(added — issue #1, see TDD.md §D4/§D6)*
+
+> **Status**: Designed (not yet implemented). Contract fixed by the architecture
+> delta in `../TDD.md` (Architecture Delta §D3–D6). This is a **new, additive**
+> route — `/price` and `/health` above are unchanged.
+
+Computes the **summed** discounted total across multiple line items in one request,
+pricing each line with the existing `priceWidget` (10% discount at `qty ≥ 100`).
+
+- **Query parameters**:
+
+  | Name    | Type   | Required | Notes |
+  |---------|--------|----------|-------|
+  | `items` | string | yes      | Comma-separated list of `qty:unit` tokens, e.g. `10:2,100:2`. URL-encode the value. Each token must contain exactly one `:`. Max **50** items. |
+
+- **Behavior**:
+  - Split `items` on `,`; each token split on `:` into `qty` and `unit` (coerced via `Number(...)`).
+  - Price each line with `priceWidget(qty, unit)` (per-line 10% discount at `qty ≥ 100`; `qty <= 0` throws).
+  - Return the sum of line totals, rounded once to 2 decimals: `+(sum).toFixed(2)`.
+
+- **Response `200 OK`**:
+  ```json
+  { "total": 200 }
+  ```
+  (example: `?items=10:2,100:2` → line 1 `10×2`=20, line 2 `100×2` −10%=180, sum=200)
+
+- **Response `400 Bad Request`** (any of, all-or-nothing — the whole request fails):
+  ```json
+  { "error": "items is required" }        // missing or empty items
+  { "error": "too many items (max 50)" }  // more than 50 tokens
+  { "error": "invalid item '<token>'" }   // malformed token or NaN qty/unit
+  { "error": "qty must be positive" }     // a line with qty <= 0 (from priceWidget)
+  ```
+
+- **Deliberate divergence from `/price`**: unlike `/price`, non-numeric (`NaN`)
+  `qty`/`unit` are **rejected with `400`** rather than passed through to
+  `{ "total": null }, 200`. This avoids a nonsensical `null` aggregate. `/price`
+  itself is unchanged. Rationale in `../TDD.md` §D3 (Q2).
+
 ## Error semantics (as implemented)
 
 - The only explicit error path is the `400` from `priceWidget` when `qty <= 0`.
