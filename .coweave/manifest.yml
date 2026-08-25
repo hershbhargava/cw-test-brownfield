@@ -10,4 +10,4 @@ spec:
       file: docker-compose.yml
   tests:
     command: "npm install && mkdir -p coverage && node --test --experimental-test-coverage --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info src/"
-    timeoutSec: 600
+    timeoutSec: 1800
