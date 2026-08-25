@@ -1,0 +1,13 @@
+apiVersion: coweave.ai/v2
+kind: TestEnvironment
+metadata:
+  name: widget-service-test
+  generatedBy: qa-test-env-author-workflow
+spec:
+  stack: other
+  entrypoint:
+    compose:
+      file: docker-compose.yml
+  tests:
+    command: npm install && npm test
+    timeoutSec: 1200
