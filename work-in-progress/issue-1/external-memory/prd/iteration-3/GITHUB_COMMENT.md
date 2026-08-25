@@ -1,32 +1,28 @@
-## Architecture Review (TDD_DELTA) — Issue #1, Iteration 3
+## 🔨 Developer Iteration 3 Complete
 
-**Outcome**: [PASS] **Approved with minor recommendations** · **Score: 91/100 (Excellent)**
+**Objective**: Implement `GET /price/bulk` — summed discounted total across line items, reusing `priceWidget`.
 
-Reviewed `docs/design/TDD.md` §D1–D11 (the bulk-pricing architecture delta) against
-`docs/requirements/PRD_DELTA_issue-1.md`, the base TDD/PRD, and the live technical
-sub-docs (`API_CONTRACTS.md`, `SECURITY_DESIGN.md`, `DEPLOYMENT_STRATEGY.md`), and
-cross-checked all claims against the actual source (`src/app.js`, `src/app.test.js`,
-`package.json`, `README.md`).
+### Changes Made
+- Added the additive `GET /price/bulk?items=qty:unit,qty:unit` route to `src/app.js`, pricing each line with the existing (unchanged) `priceWidget` and summing with a final 2-decimal round.
+- All-or-nothing validation per the TDD contract: `400` for missing/empty `items`, >50 items, malformed/non-numeric tokens, or a line with `qty <= 0`.
+- Added an in-process HTTP test harness (ephemeral port + built-in `fetch`, **no new dependency**) with 18 new tests plus the 3 original unit tests — **21/21 passing**.
 
-### Strengths
-- All 6 PRD functional requirements (FR-BULK-1..6) and all 6 open questions (Q1–Q6)
-  are explicitly resolved with rationale — the delta is implementation-ready.
-- Backward compatibility, migration, and rollback are correctly scoped as trivial/N/A
-  for this additive, stateless change, each backed by direct code evidence.
-- Fully consistent with the existing minimal architecture (reuses `priceWidget`
-  unmodified, same error idiom, same response envelope, no new layering).
+### Files Modified
+- `src/app.js` — new `/price/bulk` handler (`/price`, `/health`, `priceWidget` untouched).
+- `src/app.test.js` — HTTP harness + success/error/boundary/regression tests.
+- `README.md` — documented the new endpoint.
 
-### Remaining Gaps (no CRITICAL/HIGH)
-| ID | Priority | Summary |
-|----|----------|---------|
-| GAP-DIFF-001 | MEDIUM | §D9's HTTP test strategy ("without binding a port") isn't concretely achievable given zero devDependencies in `package.json` — needs one clarifying sentence on mechanism (e.g., `app.listen(0)` + built-in `fetch`). |
-| GAP-DIFF-002 | MEDIUM | §D4 parsing assumes `items` is always a string; a repeated query param (`?items=a&items=b`) produces an array, causing an uncontracted error message instead of the documented `400`. |
-| GAP-DIFF-003 | LOW | PRD's README communication-plan requirement (§7) has no corresponding TDD task. |
-| GAP-DIFF-004 | LOW | Empty-token edge case (`items=10:2,,100:2`) is handled by the algorithm but not listed as a required test. |
-| GAP-DIFF-005 | LOW | Security section doesn't cover the error-message-reflection angle of GAP-DIFF-002. |
+### Testing
+- `node --test src/app.test.js` → 21 pass / 0 fail (full suite runs in the QA workflow).
+- Backward compatibility verified: `/health`, `/price`, and the 3 `priceWidget` unit tests all still pass.
 
-**Recommendation**: Proceed to implementation. All five gaps are one-paragraph fixes
-to §D3/§D4/§D7/§D9 — no design rework needed.
+### Architect Review Gaps
+All 5 gaps from the TDD_DELTA review addressed (2 MEDIUM, 3 LOW) — see `GAP_FIXES_SUMMARY.md`:
+- GAP-DIFF-001 (ephemeral-port + `fetch` test mechanism, no `supertest`)
+- GAP-DIFF-002 (type-guard rejects non-string `items` before `.split`)
+- GAP-DIFF-003 (README updated) · GAP-DIFF-004 (empty-token tests) · GAP-DIFF-005 (no error-text leak)
 
-Full detail: `GAP_ANALYSIS.md`, `ARCHITECTURE_QUALITY.md`, `REVIEW_SUMMARY.md` in
-`work-in-progress/issue-1/external-memory/prd/iteration-3/`.
+### Next Steps
+- QA workflow runs `npm install && npm test` for aggregate pass/fail + coverage.
+
+*Automated by CoWeave Developer.*
