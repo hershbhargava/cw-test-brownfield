@@ -1,11 +1,11 @@
 # DEBUG: Final AI Prompt
 
-> **Generated**: 2026-08-25T01:31:35.989Z
+> **Generated**: 2026-08-25T02:16:16.488Z
 > **Role**: architect-ai
 > **Iteration**: 1
 > **CE Studio Context**: YES
 > **CE Studio Tokens**: 3074
-> **Total Characters**: 19927
+> **Total Characters**: 20325
 
 ---
 
@@ -53,6 +53,14 @@ Record covered-vs-todo subsystems in metadata.json. On re-runs, READ the existin
 - **Iteration > 1 / Same Session**: Focus on feedback and refinements; use existing knowledge
 
 ---
+
+### Repository Documentation
+
+No specific documents were provided as input. Before starting, explore the repository documentation directory:
+
+`/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/`
+
+Read any relevant design documents (TDD, PRD, architecture specs) found there before designing. Follow precedence: TDD > PRD > other docs.
 
 ### Repository Context
 
@@ -124,7 +132,7 @@ Each REQUIRED file MUST be written; absence fails the workflow envelope. OPTIONA
   "iteration": 1,
   "role": "architect-ai",
   "status": "completed",
-  "timestamp": "2026-08-25T01:31:34.679Z",
+  "timestamp": "2026-08-25T02:16:15.176Z",
   "primary_issue": 1,
   "issues_designed": [],
   "design_mode": "reverse_engineer",
