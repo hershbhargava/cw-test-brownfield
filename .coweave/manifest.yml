@@ -9,5 +9,5 @@ spec:
     compose:
       file: docker-compose.yml
   tests:
-    command: npm install && npm run test:coverage
+    command: npm install && npm test
     timeoutSec: 1200
