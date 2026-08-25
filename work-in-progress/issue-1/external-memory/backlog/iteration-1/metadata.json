@@ -1,51 +1,46 @@
 {
   "iteration": 1,
-  "role": "architect-ai",
+  "role": "prd-generator-ai",
   "status": "completed",
-  "timestamp": "2026-08-25T02:16:15.176Z",
-  "primary_issue": 1,
-  "issues_designed": [],
-  "design_mode": "reverse_engineer",
-  "mode": "REVERSE_ENGINEER",
-  "quality_score": "high",
+  "workflow_mode": "generation",
+  "timestamp": "2026-08-25T04:02:00Z",
+  "prd_name": "Add bulk pricing endpoint",
+  "design_mode": "NEW_APPLICATION",
+  "depth_mode": "detailed",
+  "reverse_engineering": true,
+  "scores": {
+    "coverage_score": 100,
+    "answer_quality_score": null,
+    "confidence_score": 95,
+    "quality_score": 92
+  },
+  "word_count": 2199,
+  "sections_count": 14,
+  "assumptions_count": 6,
+  "open_questions_count": 6,
+  "coverage_ledger": {
+    "product_areas": [
+      { "area": "pricing calculation (/price, priceWidget)", "status": "covered", "source": "src/app.js" },
+      { "area": "liveness (/health)", "status": "covered", "source": "src/app.js" },
+      { "area": "unit tests (priceWidget)", "status": "covered", "source": "src/app.test.js" },
+      { "area": "security posture", "status": "covered", "source": "docs/design/technical/SECURITY_DESIGN.md" },
+      { "area": "deployment/observability", "status": "covered", "source": "docs/design/technical/DEPLOYMENT_STRATEGY.md" },
+      { "area": "bulk pricing endpoint (/price/bulk)", "status": "out_of_scope_not_implemented", "source": "issue #1 (not in code)" }
+    ],
+    "repository_coverage": "complete",
+    "notes": "Two source files (~33 lines) fully read. Bulk endpoint from issue #1 is NOT implemented in code; documented as Out of Scope + Open Question, not invented as a feature."
+  },
+  "input_documents": [
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/hershbhargava/cw-test-brownfield/issues/issue-1.json",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/TDD.md",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/SYSTEM_ARCHITECTURE.md",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/API_CONTRACTS.md",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/SECURITY_DESIGN.md",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/DEPLOYMENT_STRATEGY.md"
+  ],
   "files_created": [
-    "docs/design/TDD.md",
-    "docs/design/technical/SYSTEM_ARCHITECTURE.md",
-    "docs/design/technical/API_CONTRACTS.md",
-    "docs/design/technical/SECURITY_DESIGN.md",
-    "docs/design/technical/DEPLOYMENT_STRATEGY.md"
+    "docs/requirements/PRD.md",
+    "docs/requirements/PRD_issue-1-QandA.md"
   ],
-  "files_skipped": [
-    {
-      "file": "docs/design/technical/DATABASE_SCHEMA.md",
-      "reason": "Not applicable - no persistence layer (no DB driver/ORM/migrations/schema in code)"
-    },
-    {
-      "file": "docs/design/technical/SERVICE_CONTRACTS.md",
-      "reason": "Not applicable - no inter-service communication (no outbound HTTP/gRPC/queue clients)"
-    },
-    {
-      "file": "docs/design/technical/EVENT_SCHEMA.md",
-      "reason": "Not applicable - no event-driven messaging (no producers/consumers/brokers)"
-    }
-  ],
-  "commit_hash": "84d9c9a",
-  "iteration_mode": "CE_STUDIO",
-  "coverage": {
-    "estimated_total_source_files": 2,
-    "estimated_total_source_lines": 33,
-    "subsystems": {
-      "src/app.js (entrypoint, routes, domain logic, bootstrap)": "covered",
-      "src/app.test.js (unit tests)": "covered",
-      "package.json (manifest, scripts, deps)": "covered",
-      "README.md": "covered",
-      ".gitignore": "covered",
-      "database/persistence": "not_applicable",
-      "inter-service communication": "not_applicable",
-      "event-driven messaging": "not_applicable",
-      "docker/ci/iac/deployment manifests": "not_applicable"
-    },
-    "overall": "complete",
-    "notes": "Continuation run: prior iteration-1 already wrote and committed the full doc-set. Re-verified every doc against src/app.js and src/app.test.js — all claims (endpoints, priceWidget discount at qty>=100, NaN pass-through, absence of DB/auth/CI) remain accurate. No changes needed to living docs; restored metadata.json only. Entire repository (2 source files, ~33 LOC) read and documented. No todo/partial subsystems remain. DATABASE_SCHEMA, SERVICE_CONTRACTS, EVENT_SCHEMA intentionally omitted (no such subsystems exist in code)."
-  }
+  "commit_hash": ""
 }
