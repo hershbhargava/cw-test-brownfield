@@ -1,40 +1,56 @@
-# Developer TDD Iteration 3 — Implementation Summary
+# Implementation Summary — Issue #1 (Iteration 3)
 
-## Named test
-`src/app.test.js`
+## Objective
+Add `GET /price/bulk?items=qty:unit,…` returning the summed discounted total across
+line items, reusing the existing `priceWidget` logic, with tests (TDD §D1–D11).
 
-## What the test asserts
-The test file exercises `priceWidget` (3 unit assertions) and the Express `app`
-over an ephemeral port (18 HTTP assertions) covering `GET /price/bulk` success
-paths (summing per-line discounted totals, single item, per-line discount, final
-2-decimal rounding), all-or-nothing error paths (non-positive qty, malformed
-tokens, missing colon, too many colons, missing/empty `items`, >50 items, exactly
-50 boundary, empty tokens from adjacent/trailing delimiters, repeated `items`
-param → non-string), and regressions for `/health`, `/price` success and `/price`
-rejection. It reaches for the `{ app, priceWidget }` exports of `./app`.
+## Outcome: NO CODE CHANGE REQUIRED — feature already implemented and committed
+This is a continuation iteration. The `/price/bulk` endpoint was implemented and
+committed earlier on this branch:
+- `fcd74b2` — `feat(price): add GET /price/bulk endpoint (issue #1)`
 
-## Implementation gap identified
-None. The production code in `src/app.js` — the `/price/bulk` handler
-(lines 21–50) plus the unchanged `priceWidget` (lines 4–8) and existing
-`/health`, `/price` routes — already satisfies every assertion in the named
-test. Running `node --test src/` yields `# pass 21 / # fail 0`, so `src/app.test.js`
-passes on first run. No minimal change was required, and per the workflow's
-"smallest production change" and "do NOT refactor beyond what the test requires"
-rules, no change was made.
+Iteration 3 verified the committed implementation against the (unchanged) upstream
+design docs, found **zero gaps**, and therefore made **no production change**
+(Golden Rule: do not add complexity beyond spec).
 
-## Files modified
-- (none) — the named test already passes against the existing implementation.
+## Documents reviewed (key points)
+- **TDD.md §D1–D11** (authoritative): single additive route; reuse `priceWidget`
+  unmodified; all-or-nothing 400 semantics; Q1–Q6 resolved (envelope `{ total }`,
+  NaN rejected, 50-item cap, empty→400, `,`/`:` delimiters, final round).
+- **API_CONTRACTS.md §3**: exact error strings and the deliberate NaN divergence
+  from `/price`.
+- **PRD.md / PRD_DELTA_issue-1.md**: product intent — additive, backward-compatible.
+- **SECURITY_DESIGN.md / TDD §D7**: 50-item cap bounds the only new input surface.
 
-## Why this satisfies the assertion
-The `/price/bulk` handler validates the `items` param (string/non-empty guard,
-≤50 tokens, exactly-two-numeric-parts-per-token, `Number.isNaN` reject), reuses
-`priceWidget` per line (which throws `'qty must be positive'` on `qty <= 0`,
-caught into a 400 envelope), sums line totals, and returns `{ total }` rounded to
-2 decimals — matching each asserted status code and body verbatim, including the
-`"invalid item '<token>'"`, `'items is required'`, `'too many items (max 50)'`,
-and `'qty must be positive'` error strings.
+## Requirements met (traced to committed code)
+| Requirement (TDD §D4 / API_CONTRACTS §3) | Code | Status |
+|---|---|---|
+| Additive `GET /price/bulk` route | `src/app.js:22` | ✅ |
+| Missing/empty/non-string `items` → `400 items is required` | `src/app.js:27-29` | ✅ |
+| `>50` tokens → `400 too many items (max 50)` | `src/app.js:31-33` | ✅ |
+| Token not exactly one `:` → `400 invalid item '<token>'` | `src/app.js:36-39` | ✅ |
+| `NaN` qty/unit → `400 invalid item` (Q2 divergence) | `src/app.js:40-43` | ✅ |
+| Reuse `priceWidget`; `qty<=0` → `400 qty must be positive` | `src/app.js:44,47-49` | ✅ |
+| Sum + final round → `200 { total }` | `src/app.js:46` | ✅ |
+| `/price`, `/health`, `priceWidget` unchanged | `src/app.js:4-16` | ✅ |
 
-## First-run result
-Test now passes: `node --test src/` → `# tests 21 / # pass 21 / # fail 0`.
-The named test file `src/app.test.js` is green with zero production changes this
-iteration. (Iteration status: `completed`, `loc_changed: 0`.)
+## Test coverage
+`src/app.test.js` — 21 tests (3 `priceWidget` unit + 18 HTTP), covering every §D9
+new-behavior case and the regressions. Lightweight verification this iteration:
+`node --test src/app.test.js` → **# tests 21 / # pass 21 / # fail 0**.
+
+## Files modified this iteration
+- None (production code). Only external-memory artifacts were written.
+
+## Known limitations / future work
+- Baseline `/price` still returns `200 { total: null }` for non-numeric `qty`
+  (legacy behavior, documented in TDD §9.1 / API_CONTRACTS §"Error semantics"). Out
+  of scope for issue #1 (bulk intentionally diverges by rejecting NaN; `/price` is
+  untouched per §D2).
+- No coverage instrumentation in `package.json` test script (repo has no nyc/c8);
+  a tooling decision for a human, not changed here.
+
+## Conflicts resolved
+- Prompt directed artifacts to `external-memory/dev/iteration-3/`, but the
+  active write-gate hook (#794) requires the resolved iteration path
+  `external-memory/prd/iteration-3/`. Followed the hook (authoritative at runtime).
