@@ -1,28 +1,41 @@
-## 🔨 Developer Iteration 3 Complete
+## Code Review — Issue #1, Iteration 3: ✅ PASS
 
-**Objective**: Implement `GET /price/bulk` — summed discounted total across line items, reusing `priceWidget`.
+**Reviewed**: `GET /price/bulk` implementation (commit `fcd74b2`)
 
-### Changes Made
-- Added the additive `GET /price/bulk?items=qty:unit,qty:unit` route to `src/app.js`, pricing each line with the existing (unchanged) `priceWidget` and summing with a final 2-decimal round.
-- All-or-nothing validation per the TDD contract: `400` for missing/empty `items`, >50 items, malformed/non-numeric tokens, or a line with `qty <= 0`.
-- Added an in-process HTTP test harness (ephemeral port + built-in `fetch`, **no new dependency**) with 18 new tests plus the 3 original unit tests — **21/21 passing**.
+### Summary
+0 CRITICAL, 0 HIGH gaps. 2 LOW/optional informational findings (neither
+blocking). All 21 automated tests pass (full suite). All 5 prior architect
+gaps independently re-verified as closed.
 
-### Files Modified
-- `src/app.js` — new `/price/bulk` handler (`/price`, `/health`, `priceWidget` untouched).
-- `src/app.test.js` — HTTP harness + success/error/boundary/regression tests.
-- `README.md` — documented the new endpoint.
+### Gap Summary
 
-### Testing
-- `node --test src/app.test.js` → 21 pass / 0 fail (full suite runs in the QA workflow).
-- Backward compatibility verified: `/health`, `/price`, and the 3 `priceWidget` unit tests all still pass.
+| Priority | Count | Status |
+|----------|-------|--------|
+| CRITICAL | 0 | — |
+| HIGH | 0 | — |
+| MEDIUM | 0 | — |
+| LOW | 2 | Informational, not blocking (optional test coverage note; lockfile commit provenance note) |
 
-### Architect Review Gaps
-All 5 gaps from the TDD_DELTA review addressed (2 MEDIUM, 3 LOW) — see `GAP_FIXES_SUMMARY.md`:
-- GAP-DIFF-001 (ephemeral-port + `fetch` test mechanism, no `supertest`)
-- GAP-DIFF-002 (type-guard rejects non-string `items` before `.split`)
-- GAP-DIFF-003 (README updated) · GAP-DIFF-004 (empty-token tests) · GAP-DIFF-005 (no error-text leak)
+### Iteration Progress
+
+| Iteration | Stage | Result |
+|-----------|-------|--------|
+| 3 (PRD review) | Architect gap analysis | 5 gaps (0 crit/high) — PASS_WITH_MINOR_GAPS |
+| 3 (dev) | Implementation | All 5 architect gaps addressed |
+| 3 (this review) | Code review | **PASS** — 0 new crit/high gaps |
+
+### Files Modified (by developer, verified by this review)
+- `src/app.js` — added `GET /price/bulk` (+`MAX_BULK_ITEMS`), reusing `priceWidget` unchanged
+- `src/app.test.js` — 18 new tests (ephemeral-port + built-in `fetch` harness, no new dependency) + 3 original tests retained
+- `README.md` — documented the new endpoint
+
+### Verification Performed
+- ✅ Requirements: FR-BULK-1..6 and Q1–Q6 all correctly implemented
+- ✅ Tests: `npm test` → 21/21 pass (full suite)
+- ✅ Backward compatibility: `/price`, `/health`, `priceWidget` byte-for-byte unchanged
+- ✅ Security: no new vulnerabilities; NaN-rejection, 50-item DoS cap, and no internal-error leakage are net improvements on the new route
+- ✅ Performance: O(n), n≤50, no I/O
+- ✅ Gate integrity: no quality gate exists in this repo to weaken; none was weakened
 
 ### Next Steps
-- QA workflow runs `npm install && npm test` for aggregate pass/fail + coverage.
-
-*Automated by CoWeave Developer.*
+None required — implementation is complete and ready to merge.
