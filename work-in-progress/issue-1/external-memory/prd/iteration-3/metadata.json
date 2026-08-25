@@ -1,0 +1,31 @@
+{
+  "iteration": 3,
+  "phase": "qa",
+  "role": "qa-test-execution",
+  "status": "failed",
+  "timestamp": "2026-08-25T23:43:50.688Z",
+  "sandbox_id": "issue-1",
+  "repository": "hershbhargava/cw-test-brownfield",
+  "branch": "feature/issue-1",
+  "exit_code": 1,
+  "duration_ms": 2084.473924,
+  "tests_total": 1,
+  "tests_passed": 0,
+  "tests_failed": 1,
+  "tests_skipped": 0,
+  "pass_rate": 0,
+  "result_source": "infra-counts",
+  "coverage": null,
+  "failure_class": "setup",
+  "outcome_classification": [
+    "build",
+    "tests"
+  ],
+  "zero_tests": false,
+  "component_coverage": null,
+  "component_coverage_gap": false,
+  "suites_incomplete": true,
+  "notable_cause": "#   code: 'MODULE_NOT_FOUND',",
+  "notable_errors": [],
+  "report_files": []
+}
