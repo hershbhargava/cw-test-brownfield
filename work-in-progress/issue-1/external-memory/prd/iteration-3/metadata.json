@@ -16,6 +16,6 @@
   "delta_summary": "Added Architecture Delta (TDD DIFF) for issue #1 GET /price/bulk endpoint: additive read-only route reusing priceWidget, no data/infra/security-posture change, backward compatible. Resolved 6 open PRD_DELTA contract questions (Q1-Q6): { total } envelope, all-or-nothing 400 with explicit NaN rejection, 50-item cap, 400 on missing items, comma/colon delimiters, final round-once. Updated API_CONTRACTS.md with the GET /price/bulk contract.",
   "open_questions_resolved": ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6"],
   "manifest_change_required": false,
-  "commit_hash": "<filled_after_commit>",
+  "commit_hash": "9a0f88d349b6a741e24c40bb6cfc86987b80a5aa",
   "iteration_mode": "CE_STUDIO"
 }
