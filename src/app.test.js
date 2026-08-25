@@ -10,7 +10,7 @@ test('applies 10% discount at 100+', () => {
   assert.strictEqual(priceWidget(100, 2), 180);
 });
 test('rejects non-positive qty', () => {
-  assert.throws(() => priceWidget(0, 2));
+  assert.throws(() => priceWidget(0, 2), { message: 'qty must be positive' });
 });
 
 // ── HTTP test harness (issue #1) ───────────────────────────────────────────
@@ -151,4 +151,55 @@ test('regression: /price still rejects non-positive qty', withServer(async (base
   const { status, body } = await getJson(`${base}/price?qty=0&unit=2`);
   assert.strictEqual(status, 400);
   assert.deepStrictEqual(body, { error: 'qty must be positive' });
+}));
+
+// ── Iteration 4: QA-review blocker fixes ───────────────────────────────────
+// HIGH: non-finite (Infinity-producing) input must be rejected with 400 on BOTH
+// endpoints, instead of the pre-fix 200 { total: null }. Number("1e400") === Infinity.
+test('bulk: rejects non-finite (Infinity) qty token', withServer(async (base) => {
+  const { status, body } = await getJson(`${base}/price/bulk?items=1e400:2`);
+  assert.strictEqual(status, 400);
+  assert.deepStrictEqual(body, { error: "invalid item '1e400:2'" });
+}));
+
+test('bulk: rejects non-finite (Infinity) unit token', withServer(async (base) => {
+  const { status, body } = await getJson(`${base}/price/bulk?items=2:1e400`);
+  assert.strictEqual(status, 400);
+  assert.deepStrictEqual(body, { error: "invalid item '2:1e400'" });
+}));
+
+test('price: rejects non-finite (Infinity) qty', withServer(async (base) => {
+  const { status, body } = await getJson(`${base}/price?qty=1e400&unit=2`);
+  assert.strictEqual(status, 400);
+  assert.deepStrictEqual(body, { error: 'qty and unit must be finite' });
+}));
+
+// MEDIUM: lock in the documented legacy /price NaN -> { total: null }, 200
+// passthrough (API_CONTRACTS §"Error semantics"). The Infinity fix must NOT change
+// this behavior — only Infinity is rejected, NaN still passes through.
+test('price: NaN qty still passes through as { total: null }, 200 (documented)', withServer(async (base) => {
+  const { status, body } = await getJson(`${base}/price?qty=abc&unit=2`);
+  assert.strictEqual(status, 200);
+  assert.deepStrictEqual(body, { total: null });
+}));
+
+// LOW: unknown routes fall through to Express's default 404 (no custom handler).
+test('regression: unknown route returns 404', withServer(async (base) => {
+  const res = await fetch(`${base}/does-not-exist`);
+  assert.strictEqual(res.status, 404);
+}));
+
+// LOW: qty=99 is just below the 100 discount threshold -> no discount, in bulk.
+test('bulk: qty=99 gets no discount (just below threshold)', withServer(async (base) => {
+  const { status, body } = await getJson(`${base}/price/bulk?items=99:2`);
+  assert.strictEqual(status, 200);
+  assert.deepStrictEqual(body, { total: 198 }); // 99 * 2, no discount
+}));
+
+// LOW: negative unit price is accepted (unvalidated) and yields a negative total —
+// documents current behavior (TDD §9.2), not a new requirement.
+test('bulk: negative unit price yields negative total (documented behavior)', withServer(async (base) => {
+  const { status, body } = await getJson(`${base}/price/bulk?items=10:-2`);
+  assert.strictEqual(status, 200);
+  assert.deepStrictEqual(body, { total: -20 });
 }));

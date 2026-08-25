@@ -1,44 +1,48 @@
-# Developer Implementation Plan — Issue #1 (Iteration 3)
+# Developer Implementation Plan — Issue #1 (Iteration 3 / QA-blocker fix pass)
 
 ## Session context
-- Iteration: 3 (CONTINUATION — feature already built in iteration 1/2 and committed)
+- Iteration: 3 (CONTINUATION) — this pass addresses the QA Test Review verdict
+  **72/100 REVIEW_AGAIN**. Special instructions require CODE CHANGES (not re-verify).
 - Branch: `feature/issue-1`
-- Mode: New Feature (Additive) — `GET /price/bulk`
 
 ## Document changes since last iteration
-`git diff --stat HEAD~1 -- docs/` → **no changes**. API_CONTRACTS.md and TDD.md
-regeneration timestamps (2026-08-25T20:42) predate the last code commit; their
-content matches the committed implementation. No re-planning required.
+`git diff --stat HEAD~1 -- docs/` → **no changes**. Requirements unchanged; the work
+here closes gaps the QA review found in the *tests/implementation*, not the spec.
 
-## Documents reviewed (this iteration)
-- `docs/design/technical/API_CONTRACTS.md` — §3 fixes the `/price/bulk` contract
-  (query `items`, `{ total }` envelope, four `400` error strings, deliberate NaN
-  divergence from `/price`).
-- `docs/design/TDD.md` — Architecture Delta §D1–D11 (authoritative technical spec):
-  §D3 resolves Q1–Q6; §D4 gives the handler pseudocode; §D9 the test plan.
-- `docs/requirements/PRD.md` / `PRD_DELTA_issue-1.md` — product intent (defers to TDD).
-- `docs/design/technical/SECURITY_DESIGN.md` — posture unchanged; 50-item cap is the
-  only new-surface mitigation (§D7).
+## QA-review blockers to remediate (from special_instructions)
+1. **HIGH** — Infinity-producing input bypasses the NaN guard: `/price/bulk?items=1e400:2`
+   and `/price?qty=1e400` returned `200 {"total":null}` instead of `400`.
+   `Number("1e400") === Infinity`; `Number.isNaN(Infinity) === false`;
+   `Infinity <= 0 === false`; `JSON.stringify(Infinity) === null`.
+3. Regression tests: (1) Infinity → 400 on both endpoints; (2) `/price` NaN→null
+   passthrough lock-in; (3) unknown-route 404; (4) `qty=99` boundary (no discount);
+   (5) negative-unit behavior; (6) assert error message on non-positive-qty unit test.
+4. Enable coverage so the QA coverage gate becomes evaluable: add
+   `"test:coverage": "node --experimental-test-coverage --test src/"`, keep `test`.
 
-## Requirements checklist (TDD §D4 / §D9, API_CONTRACTS §3)
-- [x] `GET /price/bulk?items=qty:unit,…` route added additively — `src/app.js:22`
-- [x] Missing/empty `items` → `400 { error: "items is required" }` — `src/app.js:27-29`
-- [x] Non-string `items` (repeated param → array) treated as missing — `src/app.js:27`
-- [x] `> 50` tokens → `400 { error: "too many items (max 50)" }` — `src/app.js:31-33`
-- [x] Token not exactly one `:` → `400 { error: "invalid item '<token>'" }` — `src/app.js:36-39`
-- [x] `Number.isNaN(qty|unit)` → `400 invalid item` (Q2 divergence) — `src/app.js:40-43`
-- [x] `priceWidget` reused per line; `qty<=0` throws → `400 qty must be positive` — `src/app.js:44,47-49`
-- [x] Sum line totals, final round `+(sum).toFixed(2)`, `200 { total }` — `src/app.js:46`
-- [x] `priceWidget`, `/price`, `/health` unchanged (backward compatible) — `src/app.js:4-16`
-- [x] Tests extend `src/app.test.js` in `node:test` style (§D9) — 21 tests present
+## Requirements checklist
+- [x] `priceWidget` rejects non-finite (Infinity/-Infinity) inputs, but NOT NaN, so
+      `/price` keeps its documented NaN→null passthrough — `src/app.js:10-14`
+- [x] `/price/bulk` per-token guard switched `Number.isNaN` → `!Number.isFinite`
+      (rejects NaN AND Infinity, all-or-nothing 400) — `src/app.js:54`
+- [x] 6 regression tests added/strengthened — `src/app.test.js:13,156-205`
+- [x] `test:coverage` script added; `test` unchanged — `package.json:9`
+- [x] `/health`, `/price` (normal + NaN passthrough), `priceWidget`, bulk normal paths
+      all backward-compatible (verified empirically + 28/28 tests)
 
-## Gap analysis
-No `GAP_ANALYSIS.md` supplied to this iteration. Full requirement→code trace above
-shows **zero implementation gaps**. Per the Golden Rule (simple requirements deserve
-simple implementations; do not add complexity beyond spec), no code change is made.
+## Gate integrity
+No quality gate weakened. The coverage gate is made *evaluable* by ADDING a coverage
+script (additive) — the existing `test` gate is untouched; no threshold is lowered.
+
+## Verification (lightweight, per policy)
+- `node --test src/app.test.js` → 28/28 pass.
+- `npm run test:coverage` → 28/28 pass + coverage report emitted.
+- Empirical endpoint probes confirm 400 on Infinity (both), 200 null on `/price` NaN,
+  unchanged normal paths, 404 on unknown route.
 
 ## Tasks
-1. [x] Read/confirm upstream docs (unchanged since HEAD~1).
-2. [x] Trace every §D4/§D9 requirement to committed code.
-3. [x] Lightweight verify: `node --test src/app.test.js` → 21/21 pass.
-4. [x] Write external-memory artifacts + commit.
+1. [x] Fix `priceWidget` finite-guard (Infinity only, preserve NaN passthrough).
+2. [x] Tighten `/price/bulk` guard to `Number.isFinite`.
+3. [x] Add/strengthen 6 regression tests.
+4. [x] Add `test:coverage` script; reconcile lockfile (no dep change).
+5. [x] Verify + write artifacts + commit.

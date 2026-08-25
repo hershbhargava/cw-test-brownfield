@@ -2,6 +2,16 @@ const express = require('express');
 
 // Existing business logic — pre-dates CoWeave adoption.
 function priceWidget(qty, unitPrice) {
+  // Reject non-finite inputs (Infinity/-Infinity) that would otherwise slip past
+  // the qty<=0 guard and produce a nonsensical Infinity total (serialized as JSON
+  // null with a 200). NaN is intentionally NOT rejected here so that /price keeps
+  // its documented NaN -> { total: null }, 200 passthrough (API_CONTRACTS §"Error
+  // semantics"); only finite-number validation is added.
+  for (const v of [qty, unitPrice]) {
+    if (typeof v === 'number' && !Number.isNaN(v) && !Number.isFinite(v)) {
+      throw new Error('qty and unit must be finite');
+    }
+  }
   if (qty <= 0) throw new Error('qty must be positive');
   const discount = qty >= 100 ? 0.1 : 0;
   return +(qty * unitPrice * (1 - discount)).toFixed(2);
@@ -38,7 +48,10 @@ app.get('/price/bulk', (req, res) => {
         return res.status(400).json({ error: `invalid item '${token}'` });
       }
       const qty = Number(parts[0]), unit = Number(parts[1]);
-      if (Number.isNaN(qty) || Number.isNaN(unit)) {
+      // Reject non-numeric (NaN) AND non-finite (Infinity, e.g. "1e400") tokens so
+      // the bulk sum can never be a nonsensical null/Infinity. Stricter than /price
+      // by design (TDD §D3/Q2); keeps all-or-nothing 400 semantics.
+      if (!Number.isFinite(qty) || !Number.isFinite(unit)) {
         return res.status(400).json({ error: `invalid item '${token}'` });
       }
       total += priceWidget(qty, unit); // throws on qty <= 0 -> caught below

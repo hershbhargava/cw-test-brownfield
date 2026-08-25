@@ -1,6 +1,6 @@
 # DEBUG: Final AI Prompt
 
-> **Generated**: 2026-08-25T21:55:51.458Z
+> **Generated**: 2026-08-25T21:42:06.042Z
 > **Role**: developer-ai
 > **Iteration**: 3
 > **CE Studio Context**: YES
@@ -217,7 +217,7 @@ If this is a NEW APPLICATION being created (not modifying existing code):
   "iteration": 3,
   "role": "developer-ai",
   "status": "completed",
-  "timestamp": "2026-08-25T21:55:51.317Z",
+  "timestamp": "2026-08-25T21:42:05.945Z",
   "primary_issue": 1,
   "issues_addressed": [1],
   "files_created": ["<list of all .md files>"],
@@ -652,15 +652,3 @@ command: npm install --no-audit --no-fund && if [ -f tsconfig.json ]; then npx -
 subdir: .
 cache_mount: /tmp/.npm
 ```
-
----
-
-## ⚠️ Special Instructions (appended by mcp-workflow.js at runtime)
-
-ITERATION 4 — address QA Test Review iteration 3 blockers (verdict 72/100 REVIEW_AGAIN). Do NOT re-verify; make code changes.
-HIGH bug: Infinity-producing input bypasses the NaN guard. e.g. GET /price/bulk?items=1e400:2 and GET /price?qty=1e400 return 200 {"total":null} instead of 400. Fix: in the numeric validation path used by BOTH /price and /price/bulk, reject values that are not finite (use Number.isFinite after parsing, alongside the existing NaN check) and return 400. Keep /price/bulk all-or-nothing 400 semantics.
-Add regression tests: (1) Infinity input -> 400 on both /price and /price/bulk; (2) MEDIUM: /price NaN->null passthrough documented behavior regression test; (3) LOW: unknown-route 404; (4) qty=99 boundary (no discount) on /price/bulk; (5) negative-unit behavior assertion; (6) assert the error message on the non-positive-qty unit test.
-Enable coverage so the QA gate is evaluable: add an npm script "test:coverage": "node --experimental-test-coverage --test src/" (keep existing "test" as-is). 
-Keep /health, /price, and priceWidget backward-compatible. Commit the changes.
-
-> Mirror of what mcp-workflow.js appends downstream. The in-flight workflow prompt does not include this; saved here for debug-artifact completeness.
