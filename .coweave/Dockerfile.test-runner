@@ -1,9 +1,16 @@
 FROM node:20-slim
 
+ENV NODE_ENV=test
+
 WORKDIR /repo
+
+COPY package.json package-lock.json ./
+
+RUN npm pkg delete scripts.preinstall scripts.install scripts.postinstall scripts.prepare && \
+    npm ci --ignore-scripts && \
+    npm rebuild
 
 COPY . .
 
-ENV NODE_ENV=test
-
-RUN npm pkg delete scripts.preinstall scripts.install scripts.postinstall scripts.prepare 2>/dev/null || true
+RUN npm pkg delete scripts.preinstall scripts.install scripts.postinstall scripts.prepare && \
+    npm pkg delete scripts.preinstall scripts.install scripts.postinstall scripts.prepare --workspaces 2>/dev/null || true

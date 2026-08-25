@@ -1,7 +1,7 @@
 apiVersion: coweave.ai/v2
 kind: TestEnvironment
 metadata:
-  name: widget-service-test
+  name: widget-service-test-env
   generatedBy: qa-test-env-author-workflow
 spec:
   stack: other
@@ -9,5 +9,5 @@ spec:
     compose:
       file: docker-compose.yml
   tests:
-    command: npm install && npm test
-    timeoutSec: 1200
+    command: "npx --yes c8 --reporter=lcovonly --reporter=text --reports-dir=coverage npm run test:coverage"
+    timeoutSec: 600

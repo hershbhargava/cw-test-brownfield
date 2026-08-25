@@ -139,20 +139,6 @@ Pick ONE pattern consistently:
 
 Either way, the install command MUST match the lockfile state per the table above.
 
-## ⚠️ Coverage collection (REQUIRED — the QA coverage gate depends on it)
-
-The QA test-review phase HARD-BLOCKS approval when coverage is not collected (a null coverage number is NOT-EVALUABLE and cannot PASS). Therefore `tests.command` MUST collect code coverage and write it as an artifact coweave-infra auto-harvests after the run. Emit ONE of:
-- an **LCOV tracefile at `coverage/lcov.info`** (PREFERRED — harvested for Node/JS, Dart/Flutter, C/C++ gcov, etc.), or
-- **JaCoCo XML** under `**/jacoco/*.xml` (JVM), or a gcov/Cobertura report.
-
-Use the stack's STANDARD, preferably ZERO-DEPENDENCY coverage mechanism, and STILL surface a human-readable pass/fail on stdout (dual reporter). Do NOT let coverage collection swallow the non-zero exit on test failure. Recipes:
-- **Node (built-in runner, node>=20)**: `node --test --experimental-test-coverage --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info` (zero deps: spec→stdout for pass/fail, lcov→coverage/lcov.info for the gate). If the repo already has a coverage script (package.json `test:coverage`, or jest/c8/nyc), PREFER it — but ensure it writes `coverage/lcov.info` (jest: `--coverage --coverageReporters=lcovonly`; c8/nyc emit lcov under coverage/ by default).
-- **Python**: `pytest --cov=<pkg> --cov-report=lcov:coverage/lcov.info --cov-report=term` (pytest-cov). If pytest-cov is unavailable: `coverage run -m pytest && coverage lcov -o coverage/lcov.info`.
-- **Go**: `go test ./... -coverprofile=coverage/coverage.out` (+ `gcov2lcov -infile=coverage/coverage.out -outfile=coverage/lcov.info` when available).
-- **JVM (Gradle/Maven)**: enable JaCoCo (`gradle test jacocoTestReport` / `mvn test`) so `**/jacoco/*.xml` is produced.
-- **Other stacks**: use the language's standard coverage flag and write `coverage/lcov.info` when possible.
-Make sure the `coverage/` output dir is WRITABLE in the test working dir. Under Pattern A (baked deps), if the coverage tool is an EXTRA dependency (pytest-cov, c8, gcov2lcov) install it in `Dockerfile.test-runner`; prefer built-ins (node `--experimental-test-coverage`, go `-coverprofile`) that need no extra dependency. If coverage genuinely cannot be collected for this stack, say so explicitly in `QA_SUMMARY.md` — never silently ship a bare runner.
-
 ## ⚠️ Bind-mount vs baked deps (CRITICAL for Pattern A)
 
 A docker-compose bind-mount of the repo (`volumes: - ..:/repo`) OVERLAYS the container's `/repo` at runtime and MASKS any node_modules/site-packages baked into the image — silently defeating Pattern A. If you bake deps in `Dockerfile.test-runner`, the `docker-compose.yml` MUST do ONE of:
