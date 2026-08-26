@@ -203,3 +203,58 @@ test('bulk: negative unit price yields negative total (documented behavior)', wi
   assert.strictEqual(status, 200);
   assert.deepStrictEqual(body, { total: -20 });
 }));
+
+// ── Iteration 5: QA-review gap closures (add-tests only; impl unchanged) ───────
+// HIGH gap: the service registers GET routes only (src/app.js). Any non-GET verb to
+// a known path has no matching handler and must fall through to Express's default
+// 404 (API_CONTRACTS §"Undefined routes": "POST /price ... returns 404"). These lock
+// that contract in so a future non-GET route can't be added silently/unintentionally.
+for (const method of ['POST', 'PUT', 'DELETE']) {
+  test(`regression: ${method} /price is not handled (404, GET-only)`, withServer(async (base) => {
+    const res = await fetch(`${base}/price?qty=10&unit=2`, { method });
+    assert.strictEqual(res.status, 404);
+  }));
+
+  test(`regression: ${method} /price/bulk is not handled (404, GET-only)`, withServer(async (base) => {
+    const res = await fetch(`${base}/price/bulk?items=10:2`, { method });
+    assert.strictEqual(res.status, 404);
+  }));
+}
+
+// MEDIUM gap: the 50-item cap bounds item COUNT, not per-token string LENGTH. An
+// absurdly long single digit-string token overflows Number(...) to Infinity (beyond
+// Number.MAX_VALUE ≈ 1.8e308), which the finite guard (src/app.js:54) rejects with
+// 400. This closes the "unbounded single-token" sub-case of the TDD §D7/D10 DoS
+// surface that the count cap alone doesn't cover. (The shorter `1e400` literal form
+// is already covered above at the "rejects non-finite (Infinity)" tests.)
+test('bulk: rejects an absurdly long digit-string qty token (overflow → Infinity)', withServer(async (base) => {
+  const hugeQty = '9'.repeat(400); // Number(hugeQty) === Infinity
+  const { status, body } = await getJson(`${base}/price/bulk?items=${hugeQty}:2`);
+  assert.strictEqual(status, 400);
+  assert.deepStrictEqual(body, { error: `invalid item '${hugeQty}:2'` });
+}));
+
+test('bulk: rejects an absurdly long digit-string unit token (overflow → Infinity)', withServer(async (base) => {
+  const hugeUnit = '9'.repeat(400); // Number(hugeUnit) === Infinity
+  const { status, body } = await getJson(`${base}/price/bulk?items=2:${hugeUnit}`);
+  assert.strictEqual(status, 400);
+  assert.deepStrictEqual(body, { error: `invalid item '2:${hugeUnit}'` });
+}));
+
+// LOW gap: negative qty in a bulk line must be rejected via priceWidget's qty<=0
+// guard — a DISTINCT case from the existing `items=0:2` zero-boundary test, proving
+// the guard covers strictly-negative (not just zero) quantities.
+test('bulk: rejects a line with negative qty (distinct from zero)', withServer(async (base) => {
+  const { status, body } = await getJson(`${base}/price/bulk?items=-5:10`);
+  assert.strictEqual(status, 400);
+  assert.deepStrictEqual(body, { error: 'qty must be positive' });
+}));
+
+// LOW gap: single-item /price with a negative unit is accepted (unit is unvalidated,
+// TDD §9.2) and yields a negative total — mirrors the existing bulk negative-unit
+// test but on /price, documenting current behavior (NOT a new requirement).
+test('price: negative unit price yields negative total (documented behavior)', withServer(async (base) => {
+  const { status, body } = await getJson(`${base}/price?qty=10&unit=-3`);
+  assert.strictEqual(status, 200);
+  assert.deepStrictEqual(body, { total: -30 }); // 10 * -3, no discount below 100
+}));
