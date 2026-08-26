@@ -1,0 +1,37 @@
+{
+  "iteration": 3,
+  "phase": "qa",
+  "role": "qa-test-execution",
+  "status": "completed",
+  "timestamp": "2026-08-26T00:32:44.798Z",
+  "sandbox_id": "issue-1",
+  "repository": "hershbhargava/cw-test-brownfield",
+  "branch": "feature/issue-1",
+  "exit_code": 0,
+  "duration_ms": 4377.420536,
+  "tests_total": 28,
+  "tests_passed": 28,
+  "tests_failed": 0,
+  "tests_skipped": 0,
+  "pass_rate": 100,
+  "result_source": "infra-counts",
+  "coverage": {
+    "lines": 100,
+    "branches": 96.43,
+    "functions": 100,
+    "statements": 100,
+    "source": "lcov",
+    "file": "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-3/reports/_artifacts/0/lcov.info"
+  },
+  "failure_class": null,
+  "outcome_classification": [],
+  "zero_tests": false,
+  "component_coverage": null,
+  "component_coverage_gap": false,
+  "suites_incomplete": false,
+  "notable_cause": null,
+  "notable_errors": [],
+  "report_files": [
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-3/reports/_artifacts/0/lcov.info"
+  ]
+}
