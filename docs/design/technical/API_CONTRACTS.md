@@ -85,6 +85,7 @@ pricing each line with the existing `priceWidget` (10% discount at `qty ≥ 100`
 - **Behavior**:
   - Split `items` on `,`; each token split on `:` into `qty` and `unit` (coerced via `Number(...)`).
   - Price each line with `priceWidget(qty, unit)` (per-line 10% discount at `qty ≥ 100`; `qty <= 0` throws).
+  - After adding each line total, re-validate the running sum with `Number.isFinite`; if it overflows to `Infinity`, reject with `400` (see `total is too large` below).
   - Return the sum of line totals, rounded once to 2 decimals: `+(sum).toFixed(2)`.
 
 - **Response `200 OK`**:
@@ -99,6 +100,7 @@ pricing each line with the existing `priceWidget` (10% discount at `qty ≥ 100`
   { "error": "too many items (max 50)" }  // more than 50 tokens
   { "error": "invalid item '<token>'" }   // malformed token or NaN qty/unit
   { "error": "qty must be positive" }     // a line with qty <= 0 (from priceWidget)
+  { "error": "total is too large" }       // running sum of valid lines overflows to Infinity
   ```
 
 - **Deliberate divergence from `/price`**: unlike `/price`, non-numeric (`NaN`)

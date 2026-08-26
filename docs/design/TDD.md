@@ -185,6 +185,7 @@ the existing `/price` contract** and **minimal added surface**.
 |----|----------|-----------|
 | **Q1 — Envelope** | Success returns `200 { "total": <sum> }`. No per-line breakdown. | Matches `/price` exactly (§5); keeps the contract minimal. A breakdown can be added later additively if a consumer needs it. |
 | **Q2 — Invalid line / NaN** | Any malformed token or a line failing `priceWidget`'s guard (`qty <= 0`) **rejects the whole request** with `400 { "error": <message> }`. `NaN` (non-numeric `qty`/`unit`) is **rejected explicitly** with `400` — deliberately stricter than `/price`'s documented `NaN → { total: null }, 200` pass-through (§9.1). | All-or-nothing avoids silently dropping/mis-summing lines. Rejecting `NaN` prevents an aggregate `total` of `null`, which would be a nonsensical bulk result. This is an intentional, localized deviation from the legacy `/price` quirk; `/price` itself is unchanged. |
+| **Q2a — Aggregate overflow (finite-total invariant)** | Beyond per-line validation, the **running sum itself** must remain finite. If, after adding a line total, the accumulator becomes non-finite (`Infinity`), **reject the whole request** with `400 { "error": "total is too large" }`. Check is performed inside the accumulation loop (fail-fast, same all-or-nothing semantics). | Per-line finiteness (Q2) is *necessary but not sufficient*: up to `MAX_BULK_ITEMS` (50) individually-finite line totals can still sum past `Number.MAX_VALUE` to `Infinity`, which `+(Infinity).toFixed(2)` serializes as JSON `null` with `200` — the exact nonsensical-`null` aggregate Q2 exists to prevent. The invariant "the bulk sum can never be null/Infinity" is only upheld by re-validating the accumulator, not just its addends. Uses the same `Number.isFinite` idiom already applied to `qty`/`unit`. |
 | **Q3 — Max items** | Cap at **50** line items. Exceeding it returns `400 { "error": "too many items (max 50)" }`. | Bounds per-request work and the unbounded-`items` DoS surface (PRD_DELTA §5.5). 50 comfortably covers realistic baskets while capping abuse. |
 | **Q4 — Empty / missing `items`** | Missing or empty `items` returns `400 { "error": "items is required" }`. | A bulk price request with nothing to price is a client error; explicit `400` is clearer than an ambiguous `{ total: 0 }`. |
 | **Q5 — Delimiters** | `,` separates line items; `:` separates `qty` and `unit`, exactly as the issue example. Callers must URL-encode the `items` value; a token must contain exactly one `:`. | Honors the issue's literal request shape; documenting encoding avoids caller confusion. |
@@ -212,10 +213,11 @@ GET /price/bulk
        c. qty = Number(parts[0]); unit = Number(parts[1])
        d. if Number.isNaN(qty) || Number.isNaN(unit)
                                  → 400 { error: "invalid item '<token>'" }
-       e. lineTotal = priceWidget(qty, unit)   // reuses existing guard + discount
+       e. sum += priceWidget(qty, unit)         // reuses existing guard + discount
+       f. if !Number.isFinite(sum)              // Q2a: aggregate overflow guard
+                                 → 400 { error: "total is too large" }
      (priceWidget throwing on qty<=0 is caught → 400 { error: e.message })
-  6. sum = Σ lineTotal
-  7. res.json({ total: +(sum).toFixed(2) })     // 200
+  6. res.json({ total: +(sum).toFixed(2) })     // 200
 ```
 
 The whole body is wrapped in the same local `try/catch → 400 { error: e.message }`
@@ -249,6 +251,9 @@ intentionally absent.
 - `GET /price/bulk?items=0:2` → `400 { "error": "qty must be positive" }`.
 - `GET /price/bulk?items=abc:2` → `400 { "error": "invalid item 'abc:2'" }`.
 - `GET /price/bulk` (no `items`) → `400 { "error": "items is required" }`.
+- `GET /price/bulk?items=1e307:1,1e307:1,…(×50)` → `400 { "error": "total is too large" }`
+  (each line is finite, but the running sum overflows to `Infinity`; Q2a guard rejects
+  rather than returning `{ "total": null }`).
 
 **Backward compatibility**: additive only. `/price` and `/health` contracts are
 unchanged; **no versioning** required.
@@ -262,8 +267,9 @@ unchanged; **no versioning** required.
   new attack surface. The **50-item cap (D3/Q3)** bounds per-request CPU/allocation,
   mitigating a trivial amplification/DoS vector. Beyond the cap, work is O(N) pure
   arithmetic with no I/O.
-- **Input handling**: tokens are split and numerically coerced; non-numeric input is
-  rejected (D3/Q2) rather than propagated. No `eval`, no dynamic property access, no
+- **Input handling**: tokens are split and numerically coerced; non-numeric and
+  non-finite input is rejected per-line (D3/Q2) and the aggregate is re-checked for
+  finiteness (D3/Q2a) rather than propagated. No `eval`, no dynamic property access, no
   injection sink is introduced (values flow only into arithmetic).
 
 ## D8. Infrastructure & Deployment Impact
@@ -295,6 +301,10 @@ manifest.yml` needs no change** (`npm install && npm test` already covers it).
 7. **Over-cap** — an `items` list of 51 entries → `400 too many items`.
 8. **Rounding** — a case whose per-line sum needs the final round (e.g. floating-point
    artifact) confirms 2-decimal output.
+9. **Aggregate overflow (Q2a)** — 50 individually-finite line items whose *sum* exceeds
+   `Number.MAX_VALUE` (e.g. `1e307:1` ×50) → `400 { "error": "total is too large" }`,
+   **not** `200 { "total": null }`. This exercises the accumulator guard when true; the
+   passing bulk-success/error cases exercise it when false.
 
 **Regression (must not break)**:
 - The three existing `priceWidget` unit tests still pass.
@@ -306,6 +316,7 @@ manifest.yml` needs no change** (`npm install && npm test` already covers it).
 | Risk | Severity | Mitigation |
 |------|----------|-----------|
 | Unbounded `items` → CPU/memory amplification | MEDIUM | 50-item cap returns `400` (D3/Q3). |
+| Aggregate sum of individually-valid lines overflows to `Infinity` → serializes as `{ "total": null }, 200` (nonsensical result) | HIGH | Re-validate the accumulator inside the loop with `Number.isFinite`; on overflow return `400 { "error": "total is too large" }` (D3/Q2a). Per-line finiteness (Q2) alone does not cover this. |
 | Divergence from `/price` `NaN` behavior confuses callers | LOW | Deliberate, documented (D3/Q2 + API_CONTRACTS); bulk rejects `NaN` to avoid a `null` aggregate. `/price` itself is untouched. |
 | Floating-point summation error in `total` | LOW | Final `+(sum).toFixed(2)` round (D3/Q6). |
 | Accidental change to `priceWidget` while wiring the route | LOW | `priceWidget` is reused unchanged; existing unit tests act as a regression guard. |
