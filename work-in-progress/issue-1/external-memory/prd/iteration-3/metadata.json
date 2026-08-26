@@ -1,37 +1,62 @@
 {
   "iteration": 3,
-  "phase": "qa",
-  "role": "qa-test-execution",
-  "status": "completed",
-  "timestamp": "2026-08-26T01:01:07.605Z",
-  "sandbox_id": "issue-1",
-  "repository": "hershbhargava/cw-test-brownfield",
-  "branch": "feature/issue-1",
-  "exit_code": 0,
-  "duration_ms": 4675.538433,
-  "tests_total": 38,
-  "tests_passed": 38,
-  "tests_failed": 0,
-  "tests_skipped": 0,
-  "pass_rate": 100,
-  "result_source": "infra-counts",
-  "coverage": {
-    "lines": 100,
-    "branches": 96.43,
-    "functions": 100,
-    "statements": 100,
-    "source": "lcov",
-    "file": "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-3/reports/_artifacts/0/lcov.info"
+  "review_timestamp": "2026-08-26T01:15:00.000Z",
+  "role": "qa-review",
+  "review_focus": "test_quality",
+  "verdict": "REVIEW_AGAIN",
+  "deployment_ready": false,
+  "recommended_action": "REQUEST_CHANGES",
+  "quality_score": 82,
+  "metrics_provenance": {
+    "authoritative_source_path": "work-in-progress/issue-1/external-memory/prd/iteration-3/metadata.json",
+    "authoritative_source_status": "ABSENT_AT_REVIEW_TIME",
+    "authoritative_source_notes": "Only FINAL_AI_PROMPT.md present in prd/iteration-3/ at review time. Per GATE-INTEGRITY rule 5, no test count, pass/fail number, or coverage figure is reported anywhere in this review's artifacts.",
+    "git_history_data_found_but_not_used": {
+      "commit": "e36405e",
+      "note": "A qa-test-execution metadata.json existed at this commit (38/38 tests, coverage lines 100/branches 96.43/functions 100/statements 100) but was superseded (renamed) into a -failed- folder before this review began. Not used per rule 5 (historical/superseded data is not authoritative)."
+    }
   },
-  "failure_class": null,
-  "outcome_classification": [],
-  "zero_tests": false,
-  "component_coverage": null,
-  "component_coverage_gap": false,
-  "suites_incomplete": false,
-  "notable_cause": null,
-  "notable_errors": [],
-  "report_files": [
-    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/work-in-progress/issue-1/external-memory/prd/iteration-3/reports/_artifacts/0/lcov.info"
-  ]
+  "coverage_summary": {
+    "statements": null,
+    "branches": null,
+    "functions": null,
+    "lines": null,
+    "status": "UNAVAILABLE — not collected by qa-test-execution at authoritative path; gate not evaluable"
+  },
+  "thresholds": {
+    "statements": 70,
+    "branches": 70,
+    "functions": 70,
+    "lines": 70
+  },
+  "coverage_gate": "NOT-EVALUABLE",
+  "files_reviewed": 2,
+  "gaps_identified": 1,
+  "gaps_closed_this_iteration": 4,
+  "edge_cases_missing": 1,
+  "requirements_without_tests": 0,
+  "files_with_zero_coverage": 0,
+  "findings": [
+    {
+      "severity": "HIGH",
+      "title": "Aggregate/sum-level numeric overflow in /price/bulk is untested and reachable",
+      "location": "src/app.js:57,59",
+      "description": "The per-token Number.isFinite guard (src/app.js:54) does not protect the running sum. 50 individually-finite line items can overflow the aggregate to Infinity, which JSON-serializes as total:null with HTTP 200 -- the exact nonsensical-aggregate outcome TDD.md SS D3/Q2 says the guard exists to prevent. Verified by direct execution during this review.",
+      "new_finding": true
+    }
+  ],
+  "gate_integrity_compliance": {
+    "gates_modified": false,
+    "gates_weakened": false,
+    "coverage_status": "UNAVAILABLE — not collected by qa-test-execution; gate not evaluable",
+    "verdict_rests_on_weakened_gate": false,
+    "metrics_sourced_only_from_authoritative_path": true,
+    "notes": "No quality gate configuration was read, modified, or referenced for weakening. Verdict is REVIEW_AGAIN per rules 3 and 6 (coverage gate not-evaluable + one new HIGH finding), independent of any historical data."
+  },
+  "prior_iteration_gaps_status": {
+    "high_non_get_verbs": "CLOSED — src/app.test.js:212-222",
+    "medium_oversized_token": "CLOSED — src/app.test.js:230-242",
+    "low_negative_qty_bulk": "CLOSED — src/app.test.js:247-251",
+    "low_negative_unit_price": "CLOSED — src/app.test.js:256-260"
+  }
 }
