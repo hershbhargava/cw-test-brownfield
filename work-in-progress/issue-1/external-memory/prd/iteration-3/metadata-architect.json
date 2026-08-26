@@ -12,7 +12,7 @@
     "docs/design/TDD.md",
     "docs/design/technical/API_CONTRACTS.md"
   ],
-  "commit_hash": "1567da5f0e41038b4ad102f1fb6358cc89bff161",
+  "commit_hash": "d863145e78d22355273325e273ad84ff892a285b",
   "iteration_mode": "CE_STUDIO",
   "note_on_metadata_file": "Written as metadata-architect.json to avoid overwriting the co-located qa-test-review metadata.json (QA phase, verdict REVIEW_AGAIN) in this shared iteration-3 artifacts directory.",
   "refinement_summary": "Closed a HIGH-severity API-contract gap flagged by the QA iteration-3 review. The bulk-pricing design (TDD Delta D3/D4/D6) validated each line item's finiteness but never re-validated the running aggregate total. Up to MAX_BULK_ITEMS=50 individually-finite line items can sum past Number.MAX_VALUE to Infinity, which +(Infinity).toFixed(2) serializes as JSON null with a 200 - contradicting the design's own stated Q2 invariant ('the bulk sum can never be a nonsensical null/Infinity'). Corrections: added decision Q2a (aggregate finite-total invariant -> 400 { error: 'total is too large' }); updated the D4 handler pseudocode with the in-loop accumulator guard; added a D6 worked example; added a D9 overflow test case (#9); added a HIGH-severity D10 risk row; updated the D7 input-handling note; and added the corresponding error line + behavior note in technical/API_CONTRACTS.md section 3.",
