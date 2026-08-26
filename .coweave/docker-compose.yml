@@ -1,0 +1,7 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .coweave/Dockerfile.test-runner
+    command: ["sleep", "infinity"]
+    working_dir: /repo

@@ -5,7 +5,8 @@
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
-    "test": "node --test src/"
+    "test": "node --test src/",
+    "test:coverage": "node --experimental-test-coverage --test src/"
   },
   "dependencies": { "express": "^4.19.2" }
 }

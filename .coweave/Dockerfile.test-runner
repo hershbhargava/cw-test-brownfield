@@ -1,0 +1,17 @@
+FROM node:20-slim
+RUN npm install -g c8
+
+ENV NODE_ENV=test
+
+WORKDIR /repo
+
+COPY package.json package-lock.json ./
+
+RUN npm pkg delete scripts.preinstall scripts.install scripts.postinstall scripts.prepare && \
+    npm ci --ignore-scripts && \
+    npm rebuild
+
+COPY . .
+
+RUN npm pkg delete scripts.preinstall scripts.install scripts.postinstall scripts.prepare && \
+    npm pkg delete scripts.preinstall scripts.install scripts.postinstall scripts.prepare --workspaces 2>/dev/null || true

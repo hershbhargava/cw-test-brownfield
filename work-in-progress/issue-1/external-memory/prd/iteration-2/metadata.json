@@ -1,0 +1,30 @@
+{
+  "iteration": 2,
+  "role": "prd-generator-ai",
+  "status": "completed",
+  "workflow_mode": "new_feature_or_bug_fix",
+  "timestamp": "2026-08-25T19:13:56Z",
+  "prd_name": "Add bulk pricing endpoint [refreshed via broker]",
+  "design_mode": "NEW_FEATURE_OR_BUG_FIX",
+  "depth_mode": "detailed",
+  "scores": {
+    "coverage_score": 90,
+    "answer_quality_score": 85,
+    "confidence_score": 88,
+    "quality_score": 90
+  },
+  "word_count": 2271,
+  "sections_count": 10,
+  "assumptions_count": 3,
+  "open_questions_count": 6,
+  "input_documents": [
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/hershbhargava/cw-test-brownfield/issues/issue-1.json",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/requirements/PRD.md",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/requirements/PRD_issue-1-QandA.md"
+  ],
+  "files_created": [
+    "docs/requirements/PRD_DELTA_issue-1.md",
+    "work-in-progress/issue-1/external-memory/prd/iteration-2/GITHUB_COMMENT.md"
+  ],
+  "commit_hash": "36d280f14a6ca99a4a67dee1667b647b4dda49d5"
+}

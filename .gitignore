@@ -1,1 +1,10 @@
 node_modules/
+
+# >>> coweave (managed: qa-test-env-author) >>>
+.coweave/docker-compose.override.yml
+**/coverage/
+**/node_modules/
+**/__pycache__/
+*.pyc
+**/db.sqlite3
+# <<< coweave (managed: qa-test-env-author) <<<
