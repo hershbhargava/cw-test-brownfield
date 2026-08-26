@@ -1,39 +1,21 @@
-## QA Test Review — Iteration 3
+## 🔨 Developer Iteration 3 Complete
 
-**Verdict:** REVIEW_AGAIN — **Quality score: 85/100** — Deployment ready: **No**
+**Objective**: Implement the new TDD §D3/Q2a aggregate-overflow guard on `GET /price/bulk` (promoted from the prior QA review's HIGH finding) and re-verify the QA-review gap tests.
 
-### Test execution (authoritative)
-- ✅ **38/38 tests passed** (100% pass rate)
-- ✅ Coverage: **100%** statements, **100%** lines, **100%** functions, **96.43%** branches (27/28 — the single uncovered branch is a benign, structurally-unreachable-under-test entrypoint guard at `src/app.js:66`, not a real gap)
-- ✅ **Coverage gate: PASS**, comfortably clearing the 70% threshold on all four metrics
+### Changes Made
+- **Q2a (HIGH):** `GET /price/bulk` now re-validates the running sum after each line — if it overflows to `Infinity`, it rejects with `400 { "error": "total is too large" }` instead of returning the nonsensical `200 { "total": null }`.
+- Added a test for Q2a (50× `1e307:1` → `400`).
+- Verified the special-instruction gap tests (non-GET verbs → 404, oversized tokens → 400, negative qty/unit) are already present and passing — no code change needed for those.
 
-### Why REVIEW_AGAIN despite excellent numbers
+### Files Modified
+- `src/app.js` — added the finite-sum accumulator guard inside the bulk loop (`:58-65`); no existing logic changed.
+- `src/app.test.js` — added the Q2a overflow test (`:262-277`); suite 38 → 39 tests.
 
-A **HIGH-severity, empirically reproduced** defect from the prior review iteration remains unfixed:
+### Testing
+- `node --check` clean on both files; targeted `node --test src/app.test.js` → **39/39 pass**.
+- Full-suite execution + coverage deferred to qa-test-execution per policy.
+- Backward compatible: `/health`, `/price`, `/price/bulk` existing contracts unchanged; `priceWidget` untouched; `/price` NaN→`{total:null},200` passthrough preserved.
 
-**Aggregate sum overflow in `GET /price/bulk`** (`src/app.js:44-58`) — the endpoint validates each line item's `qty`/`unit` for finiteness individually (line 54), but never re-validates the running `total` after accumulation. 50 individually-valid line items (the endpoint's own documented max, `MAX_BULK_ITEMS=50`) can sum past `Number.MAX_VALUE`, overflowing to `Infinity`, which serializes as JSON `null`:
-
-```
-GET /price/bulk?items=1e307:1,1e307:1,...(×50)
-→ HTTP 200 {"total":null}
-```
-
-This directly contradicts the finite-guard's own stated purpose in the code comment (`src/app.js:51-53`: "the bulk sum can never be a nonsensical null/Infinity"). No test in the 38-test suite covers this — it's a distinct edge case from the already-tested single-token overflow cases.
-
-100% line/statement/function coverage doesn't catch this because the bug is a **missing guard**, not an unexecuted branch — see `COVERAGE_GAP_ANALYSIS.md` for the full explanation of why coverage percentage and this defect are orthogonal.
-
-### What's needed for approval
-
-A one-line fix inside the accumulation loop plus one new test. Exact code + test template provided in `ITERATION-4-GUIDANCE.md` — copy-paste ready, ~5 minute fix.
-
-### Strengths (unchanged from a strong baseline)
-- Thorough edge-case coverage otherwise: `Infinity`/`NaN` handling, discount boundaries, malformed tokens, empty/adjacent delimiters, non-GET verb rejection (6 tests via loop), item-count cap boundary (49/50/51), documented-behavior lock-ins (NaN passthrough on `/price`, negative unit price).
-- Clean, well-organized test harness (`withServer()` ephemeral-port pattern, proper teardown).
-- Full requirement traceability: every FR-BULK-1..6 and TDD Q1-Q6 item has a corresponding test.
-
-### Artifacts
-- `TEST_QUALITY_REPORT.md` — full score breakdown
-- `TEST_GAP_ANALYSIS.md` — requirement traceability matrix + gap detail
-- `COVERAGE_GAP_ANALYSIS.md` — branch-by-branch lcov reconciliation
-- `EDGE_CASE_REVIEW.md` — edge-case inventory + severity justification
-- `ITERATION-4-GUIDANCE.md` — copy-pasteable fix and test
+### Next Steps
+- qa-test-execution to run the full suite + coverage; the new Q2a branch is covered on both sides (true = new test, false = existing bulk-success tests).
+- No gate/config changes were made (GATE-INTEGRITY); `package.json` test script left without a coverage command as instructed.

@@ -55,6 +55,14 @@ app.get('/price/bulk', (req, res) => {
         return res.status(400).json({ error: `invalid item '${token}'` });
       }
       total += priceWidget(qty, unit); // throws on qty <= 0 -> caught below
+      // Q2a (TDD §D3): per-line finiteness (above) is necessary but not sufficient —
+      // up to MAX_BULK_ITEMS individually-finite line totals can still sum past
+      // Number.MAX_VALUE to Infinity, which +(Infinity).toFixed(2) serializes as JSON
+      // null with a 200. Re-validate the running sum (fail-fast, all-or-nothing) so the
+      // bulk total can never be a nonsensical null/Infinity.
+      if (!Number.isFinite(total)) {
+        return res.status(400).json({ error: 'total is too large' });
+      }
     }
     res.json({ total: +total.toFixed(2) });
   } catch (e) {

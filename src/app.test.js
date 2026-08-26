@@ -258,3 +258,20 @@ test('price: negative unit price yields negative total (documented behavior)', w
   assert.strictEqual(status, 200);
   assert.deepStrictEqual(body, { total: -30 }); // 10 * -3, no discount below 100
 }));
+
+// ── Iteration 6: TDD §D3/Q2a — aggregate overflow (finite-total invariant) ─────
+// HIGH: per-line finiteness (src/app.js:54) is necessary but not sufficient. Up to
+// MAX_BULK_ITEMS (50) individually-finite line totals can still sum past
+// Number.MAX_VALUE (≈1.7976931348623157e308) to Infinity, which +(Infinity).toFixed(2)
+// serializes as JSON null with a 200 — the exact nonsensical-null aggregate the bulk
+// endpoint exists to prevent. The Q2a accumulator guard (src/app.js:63) rejects with
+// 400 { error: "total is too large" }. Each 1e307:1 line is individually finite
+// (priceWidget(1e307,1) = 9e306 after the qty>=100 discount); 50 of them sum to
+// 4.5e308 > Number.MAX_VALUE -> Infinity. This exercises the guard when TRUE; every
+// other passing bulk test exercises it when FALSE.
+test('bulk: rejects when the SUM of valid line items overflows to Infinity (Q2a)', withServer(async (base) => {
+  const items = Array.from({ length: 50 }, () => '1e307:1').join(',');
+  const { status, body } = await getJson(`${base}/price/bulk?items=${items}`);
+  assert.strictEqual(status, 400);
+  assert.deepStrictEqual(body, { error: 'total is too large' });
+}));
