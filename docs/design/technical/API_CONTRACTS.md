@@ -40,7 +40,11 @@ Computes the discounted total for a given quantity and unit price.
   | `unit`| number | yes      | Coerced via `Number(req.query.unit)`. Interpreted as the per-unit price. |
 
 - **Behavior** (`priceWidget` in `src/app.js`):
-  - `qty <= 0` → throws → `400`.
+  - `qty` or `unit` is a non-`NaN` non-finite number (`±Infinity`, e.g.
+    `Number('1e400')`) → throws `qty and unit must be finite` → `400`. *(Added for
+    issue #1; see TDD.md §D2a. Previously such input returned `200 { "total": null }`
+    — this is a strict tightening.)*
+  - `qty <= 0` → throws `qty must be positive` → `400`.
   - `qty >= 100` → 10% discount applied.
   - `qty < 100` → no discount.
   - Result = `qty * unit * (1 - discount)` rounded to 2 decimals.
@@ -53,7 +57,8 @@ Computes the discounted total for a given quantity and unit price.
 
 - **Response `400 Bad Request`** (thrown by `priceWidget`):
   ```json
-  { "error": "qty must be positive" }
+  { "error": "qty must be positive" }        // qty <= 0
+  { "error": "qty and unit must be finite" } // ±Infinity input (issue #1, TDD §D2a)
   ```
 
 Defined in `src/app.js`:
@@ -98,19 +103,23 @@ pricing each line with the existing `priceWidget` (10% discount at `qty ≥ 100`
   ```json
   { "error": "items is required" }        // missing or empty items
   { "error": "too many items (max 50)" }  // more than 50 tokens
-  { "error": "invalid item '<token>'" }   // malformed token or NaN qty/unit
+  { "error": "invalid item '<token>'" }   // malformed token, or NaN/±Infinity qty/unit
   { "error": "qty must be positive" }     // a line with qty <= 0 (from priceWidget)
   { "error": "total is too large" }       // running sum of valid lines overflows to Infinity
   ```
 
 - **Deliberate divergence from `/price`**: unlike `/price`, non-numeric (`NaN`)
   `qty`/`unit` are **rejected with `400`** rather than passed through to
-  `{ "total": null }, 200`. This avoids a nonsensical `null` aggregate. `/price`
-  itself is unchanged. Rationale in `../TDD.md` §D3 (Q2).
+  `{ "total": null }, 200`. This avoids a nonsensical `null` aggregate. `/price`'s
+  `NaN` pass-through is unchanged (only its `Infinity` case was tightened — §2,
+  TDD §D2a). Rationale in `../TDD.md` §D3 (Q2).
 
 ## Error semantics (as implemented)
 
-- The only explicit error path is the `400` from `priceWidget` when `qty <= 0`.
+- `priceWidget` has two explicit error paths, both surfaced as `400`: `qty <= 0`
+  (`qty must be positive`) and non-finite `±Infinity` input (`qty and unit must be
+  finite`, added for issue #1 — TDD §D2a). `/price/bulk` adds its own token/parse
+  and aggregate-overflow `400`s (see §3).
 - The error body is `{ "error": <Error.message> }`.
 - There is **no** central Express error-handling middleware
   (`(err, req, res, next)`); error handling is local to the `/price` handler's

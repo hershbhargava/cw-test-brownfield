@@ -1,0 +1,41 @@
+{
+  "iteration": 4,
+  "role": "architect-ai",
+  "status": "completed",
+  "timestamp": "2026-09-08T21:43:07.175Z",
+  "primary_issue": 1,
+  "issues_designed": [1],
+  "design_mode": "new_application",
+  "mode": "REFINEMENT",
+  "quality_score": 95,
+  "files_created": [
+    "docs/design/TDD.md",
+    "docs/design/technical/API_CONTRACTS.md"
+  ],
+  "commit_hash": "3cc9877dd4885ebaef53acdf8e479aee4c6c1976",
+  "iteration_mode": "CE_STUDIO",
+  "refinement_summary": {
+    "trigger": "TDD/API contract drifted from implemented code (src/app.js) across dev/QA iterations.",
+    "gaps_found": [
+      "TDD §4 and §D2 claimed priceWidget was 'unchanged / reused as-is', but src/app.js:10-14 adds a finiteness guard throwing 'qty and unit must be finite' on ±Infinity input.",
+      "New error message 'qty and unit must be finite' was undocumented in TDD and API_CONTRACTS.",
+      "Existing /price endpoint's contract silently tightened (Infinity input: 200 {total:null} -> 400) with no doc capture.",
+      "§D3/Q2a rationale described only the accumulator guard; the finite-total invariant is now two-layer (per-line priceWidget guard + accumulator)."
+    ],
+    "corrections_made": [
+      "TDD §4: documented the priceWidget finiteness guard and its NaN scope boundary.",
+      "TDD §9.1: noted the Infinity sub-case remediation vs. preserved NaN pass-through.",
+      "TDD §D1/§D2: corrected 'unmodified priceWidget' claims; affected-boundaries now include the domain function and the /price Infinity tightening.",
+      "TDD §D2a (new): full before/after of the priceWidget finiteness guard and its /price ripple.",
+      "TDD §D3/Q2a: reframed the finite-total invariant as two layers.",
+      "TDD §D6: added existing-endpoint contract note for /price Infinity->400; restated backward compatibility as a strict tightening (no versioning).",
+      "TDD §D9: added test-plan items for per-line non-finite rejection, /price Infinity guard, and NaN-pass-through regression.",
+      "TDD §D10: added risk rows for NaN-regression and /price tightening; refined the priceWidget-change risk.",
+      "TDD §D11: coverage now states implementation-complete and reflects the guard.",
+      "API_CONTRACTS.md §2: documented /price Infinity->400 'qty and unit must be finite'.",
+      "API_CONTRACTS.md §3 + Error semantics: NaN/±Infinity token rejection and two priceWidget error paths clarified."
+    ],
+    "backward_compatibility": "No versioning required. /health unchanged; /price unchanged for all finite inputs and its NaN->{total:null},200 pass-through; only the previously-nonsensical Infinity case tightened to 400 (strict improvement). /price/bulk purely additive.",
+    "docs_consistent_with_code": true
+  }
+}
