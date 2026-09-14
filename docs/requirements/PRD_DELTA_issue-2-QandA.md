@@ -177,3 +177,74 @@ All questions answered — proceed to author `PRD_DELTA_issue-2.md`.
 - **Acceptance**: `GET /widgets/999999` → 404; `GET /widgets/<existing>` → 200; existing tests stay green; new test covers the numeric-miss case.
 - **Backward compatibility**: fully backward compatible; no migration.
 - **Priority/roll-out**: standard; no feature flag needed.
+
+---
+
+## ⚠️ Iteration 2 — Reconciliation required (BLOCKER: answers reference a non-existent endpoint)
+
+> The iteration-1 answers were read as authoritative and I attempted to author
+> `PRD_DELTA_issue-2.md`. **I could not**, because the answers describe a defect in
+> an endpoint that does not exist in this repository. Writing the delta anyway would
+> require inventing an entire widget-lookup feature (data store, route, response
+> contract) — a NEW feature, which directly contradicts the answer's own
+> *"Scope OUT: no new endpoints."* Per the rule *"Never assume — verify by reading
+> actual code,"* this must be reconciled before a PRD delta can be written.
+>
+> **Ground truth** (verified `2026-09-14`): `src/app.js` registers exactly three GET
+> routes — `/health` (line 21), `/price` (line 22), `/price/bulk` (line 32). A repo-wide
+> search for `widgets`, `/widgets`, `findById`, `lookup`, and `not found` returns
+> **zero** matches outside these three routes. There is no `GET /widgets/:id`, no
+> widget store, and no truthy-on-lookup code anywhere in `src/`.
+
+### Q11 — The answered defect targets `GET /widgets/:id`, which does not exist. How should we reconcile? *(HIGH — BLOCKER)*
+
+- **Question**: The answer states *"`GET /widgets/:id` returns HTTP 200 with an empty
+  body when `:id` is a numeric string that does not exist, instead of 404,"* with root
+  cause *"a truthy check on the lookup result."* No such route, lookup, or widget store
+  exists in `src/app.js`. Which of these is correct?
+  - **(a)** Wrong repository / branch — the `/widgets/:id` endpoint lives elsewhere and
+    this issue should target that codebase.
+  - **(b)** The endpoint name is a mistake and the real defect is on an existing route
+    (`/price`, `/price/bulk`, or `/health`) — if so, please restate it against that route.
+  - **(c)** This is genuinely a NEW endpoint to be built (widget lookup by id) — in
+    which case it is a feature, not a "bug fix," and the "no new endpoints" scope line
+    must be removed.
+  - **(d)** This is a pure live-test artifact and no code change is intended.
+- **Why it matters**: A PRD delta cannot describe a fix to code that isn't there
+  without fabricating the feature it supposedly fixes. This blocks the entire delta.
+- **Suggested default**: [ASSUMPTION: (d) live-test artifact — do not author a delta
+  or change code until the target endpoint is confirmed to exist.]
+- **Source**: iteration-1 ANSWERS block above; `src/app.js:21,22,32` (only routes);
+  repo-wide grep for `widgets`/`lookup` (no matches).
+- **Answer**:
+
+### Q12 — If the real defect is on an existing route, what is the corrected expected/actual? *(HIGH)*
+
+- **Question**: If Q11 = (b), restate the defect against a real route. For reference,
+  current documented behaviors are: `/price` returns `200 { "total": null }` for
+  non-numeric input (NaN pass-through, `src/app.js:8`); `/price` and `/price/bulk`
+  reject non-finite input with `400`; unknown routes already return Express's default
+  `404` (`app.test.js:187`). Which of these, if any, is the "numeric issueNumber" bug?
+- **Why it matters**: Redirects the fix to a real, testable surface so acceptance
+  criteria can be grounded in the actual code.
+- **Suggested default**: [ASSUMPTION: none — cannot map the described defect onto an
+  existing route without operator input.]
+- **Source**: `src/app.js`; `src/app.test.js:180,187`; `PRD.md` §7.
+- **Answer**:
+
+### Q13 — If (c) a new widget-lookup endpoint is intended, what is its full contract? *(HIGH, only if Q11=c)*
+
+- **Question**: If a `GET /widgets/:id` endpoint is genuinely wanted, what is the
+  source of widget data (there is currently no persistence — `PRD.md` §6, §10), the
+  success response shape, and the not-found response? Note this reclassifies the work
+  from bug fix to new feature.
+- **Why it matters**: The current service is stateless with no data store; a lookup
+  endpoint needs a defined data source, which is a substantial scope change.
+- **Suggested default**: [ASSUMPTION: not intended — the service stays stateless and
+  price-only.]
+- **Source**: `PRD.md` §6 Out of Scope (persistence), §10 Constraints (no persistence).
+- **Answer**:
+
+> **Next step**: Answer **Q11** (and Q12 or Q13 as applicable), then re-run. Once the
+> target endpoint is confirmed to exist in this repo (or the scope is corrected), the
+> next iteration can author `PRD_DELTA_issue-2.md` grounded in real code.

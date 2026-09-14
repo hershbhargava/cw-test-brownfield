@@ -1,0 +1,25 @@
+{
+  "iteration": 2,
+  "role": "prd-generator-ai",
+  "status": "blocked",
+  "workflow_mode": "new_feature_or_bug_fix",
+  "output_mode": "questionnaire_reconciliation",
+  "timestamp": "2026-09-14T22:05:00Z",
+  "prd_name": "Bug1 live-test: numeric issueNumber",
+  "design_mode": "NEW_FEATURE_OR_BUG_FIX",
+  "depth_mode": "detailed",
+  "scores": {
+    "coverage_score": 40,
+    "answer_quality_score": 25,
+    "confidence_score": 20,
+    "quality_score": 80
+  },
+  "blocker": "Answered defect targets GET /widgets/:id, which does not exist in src/app.js (only /health, /price, /price/bulk). Cannot author a PRD delta for a non-existent endpoint without fabricating a new feature that contradicts the answer's own 'no new endpoints' scope. Reconciliation questions Q11-Q13 added.",
+  "word_count": 1650,
+  "sections_count": 14,
+  "assumptions_count": 7,
+  "open_questions_count": 13,
+  "input_documents": ["/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-2/repos/hershbhargava/cw-test-brownfield/hershbhargava/cw-test-brownfield/issues/issue-2.json"],
+  "files_created": ["docs/requirements/PRD_DELTA_issue-2-QandA.md"],
+  "commit_hash": "bdb82a35558d4349ddf5971a96f52e35679cc1ec"
+}
