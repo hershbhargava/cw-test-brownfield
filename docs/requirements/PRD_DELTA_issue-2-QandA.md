@@ -164,3 +164,16 @@
 > **Next step**: Answer Q1–Q4 (HIGH) at minimum, then re-run. If the issue is a pure
 > live-test artifact, mark Q1/Q4 accordingly and the workflow can close it without a
 > code change.
+
+---
+
+## ANSWERS (operator, #175 live-test)
+
+All questions answered — proceed to author `PRD_DELTA_issue-2.md`.
+
+- **Defect**: `GET /widgets/:id` returns HTTP 200 with an empty body when `:id` is a **numeric string that does not exist**, instead of 404. Root cause: a truthy check on the lookup result treats `0`/empty as found.
+- **Expected**: unknown id → **404** `{ "error": "not found" }`; existing id → 200 with the widget JSON.
+- **Scope IN**: fix the lookup/return in `src/app.js`; add a regression test in `src/app.test.js`. **Scope OUT**: no schema/API-shape changes, no new endpoints.
+- **Acceptance**: `GET /widgets/999999` → 404; `GET /widgets/<existing>` → 200; existing tests stay green; new test covers the numeric-miss case.
+- **Backward compatibility**: fully backward compatible; no migration.
+- **Priority/roll-out**: standard; no feature flag needed.
