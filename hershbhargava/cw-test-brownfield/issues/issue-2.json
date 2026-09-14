@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "downloaded_at": "2026-09-14T21:56:33.048Z",
+    "downloaded_at": "2026-09-14T22:02:39.231Z",
     "owner": "hershbhargava",
     "repository": "cw-test-brownfield",
     "issue_number": "2",
@@ -48,9 +48,9 @@
     "locked": false,
     "assignees": [],
     "milestone": null,
-    "comments": 0,
+    "comments": 1,
     "created_at": "2026-08-25T04:29:26Z",
-    "updated_at": "2026-08-25T04:29:26Z",
+    "updated_at": "2026-09-14T21:59:25Z",
     "closed_at": null,
     "assignee": null,
     "author_association": "OWNER",
@@ -86,7 +86,53 @@
     "pinned_comment": null
   },
   "comments": [
-    {}
+    {
+      "url": "https://api.github.com/repos/hershbhargava/cw-test-brownfield/issues/comments/5671388112",
+      "html_url": "https://github.com/hershbhargava/cw-test-brownfield/issues/2#issuecomment-5671388112",
+      "issue_url": "https://api.github.com/repos/hershbhargava/cw-test-brownfield/issues/2",
+      "id": 5671388112,
+      "node_id": "IC_kwDOUDOaqc8AAAABUgqD0A",
+      "user": {
+        "login": "hershbhargava",
+        "id": 22163465,
+        "node_id": "MDQ6VXNlcjIyMTYzNDY1",
+        "avatar_url": "https://avatars.githubusercontent.com/u/22163465?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/hershbhargava",
+        "html_url": "https://github.com/hershbhargava",
+        "followers_url": "https://api.github.com/users/hershbhargava/followers",
+        "following_url": "https://api.github.com/users/hershbhargava/following{/other_user}",
+        "gists_url": "https://api.github.com/users/hershbhargava/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/hershbhargava/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/hershbhargava/subscriptions",
+        "organizations_url": "https://api.github.com/users/hershbhargava/orgs",
+        "repos_url": "https://api.github.com/users/hershbhargava/repos",
+        "events_url": "https://api.github.com/users/hershbhargava/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/hershbhargava/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "created_at": "2026-09-14T21:59:25Z",
+      "updated_at": "2026-09-14T21:59:25Z",
+      "body": "## 📋 PRD Iteration 1 — Bug1 live-test: numeric issueNumber\n\n**Mode**: New Feature / Bug Fix — **Questionnaire** (no PRD delta yet)\n**Issue**: #2\n**Branch**: `feature/issue-2`\n\n### What this iteration covers\n\nThe issue is a live-test placeholder (title *\"Bug1 live-test: numeric issueNumber\"*,\nbody *\"live-test #120c bug 1\"*) with no defect description, expected/actual behavior,\nor repro. Coverage is ~10%, so **no PRD delta was authored** — instead a clarifying\nquestionnaire was generated so the real \"Bug 1\" can be defined.\n\n### Key decisions\n\n- Routed to **Questionnaire mode**: no answered questionnaire for issue #2 and no existing `PRD_DELTA_issue-2.md`.\n- Grounded questions in the current code: `GET /health`, `GET /price`, and `GET /price/bulk` (`src/app.js`), plus documented edge behaviors (NaN → `{ total: null }`, negative `unit` accepted).\n- Did NOT modify `PRD.md` or create a PRD delta (questionnaire mode only).\n\n### Open questions for the reviewer\n\n- **Q1 (HIGH)** — What is the actual defect, and on which endpoint?\n- **Q2/Q3 (HIGH)** — Expected vs. actual behavior and exact repro request?\n- **Q4 (HIGH)** — Is \"numeric issueNumber\" the bug, or just live-test metadata?\n\n### Files in this iteration\n\n- `docs/requirements/PRD_DELTA_issue-2-QandA.md` — clarifying questionnaire (10 questions, 4 assumptions)\n- `external-memory/backlog/iteration-1/metadata.json` — machine-readable metrics\n- `external-memory/backlog/iteration-1/GITHUB_COMMENT.md` — this comment\n\n### Next step\n\nAnswer at least Q1–Q4 (HIGH) in `PRD_DELTA_issue-2-QandA.md`, then re-run. If this is\na pure live-test artifact, mark Q1/Q4 accordingly to close without a code change.\n",
+      "author_association": "OWNER",
+      "pin": null,
+      "reactions": {
+        "url": "https://api.github.com/repos/hershbhargava/cw-test-brownfield/issues/comments/5671388112/reactions",
+        "total_count": 0,
+        "+1": 0,
+        "-1": 0,
+        "laugh": 0,
+        "hooray": 0,
+        "confused": 0,
+        "heart": 0,
+        "rocket": 0,
+        "eyes": 0
+      },
+      "performed_via_github_app": null,
+      "minimized": null
+    }
   ],
   "attachments_found": 0,
   "attachments": []
