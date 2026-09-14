@@ -31,6 +31,6 @@
     "SECURITY_DESIGN.md": "no change - no new attack surface",
     "DEPLOYMENT_STRATEGY.md": "no change - same process/run/test"
   },
-  "commit_hash": "<filled_after_commit>",
+  "commit_hash": "a55c940",
   "iteration_mode": "CE_STUDIO"
 }
