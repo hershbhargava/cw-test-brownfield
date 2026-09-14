@@ -326,3 +326,133 @@ manifest.yml` needs no change** (`npm install && npm test` already covers it).
 This delta covers the full architectural impact of issue #1: one additive route, no
 data/infra/security-posture changes, backward-compatible, with the six open contract
 questions resolved (D3) and a regression-aware test plan (D9). Implementation-ready.
+
+---
+
+# Architecture Delta — Issue #2: "Bug1 live-test: numeric issueNumber"
+
+> **Mode**: Bug fix on the existing application (TDD DIFF). This section is **additive**
+> to the baseline (§1–§10, what IS) and to the issue #1 delta (§D1–§D11). It specifies
+> ONLY the architectural change for issue #2 and its ripple effects.
+> **Status**: ⚠️ **BLOCKED — no architectural change can be specified.** The
+> authoritative answers describe a defect in `GET /widgets/:id`, an endpoint that
+> **does not exist** in this repository. Specifying a fix would require inventing an
+> entire widget-lookup feature (data source, route, response contract), which is a new
+> feature that directly contradicts the answer's own scope line *"Scope OUT: … no new
+> endpoints."* Per the base standard *"Never assume — verify by reading actual code"*
+> and *"NEVER make undocumented assumptions,"* no design is fabricated here.
+>
+> **Issue**: #2 "Bug1 live-test: numeric issueNumber" · **Branch**: `feature/issue-2` ·
+> **Upstream**: `docs/requirements/PRD_DELTA_issue-2.md` (also BLOCKED).
+> **Sources verified** (`2026-09-14`): `src/app.js`, `src/app.test.js`, issue
+> `issues/issue-2.json`, questionnaire `docs/requirements/PRD_DELTA_issue-2-QandA.md`.
+
+## E1. Change Summary
+
+The stakeholder answers request a bug fix: make `GET /widgets/:id` return
+**`404 { "error": "not found" }`** for a numeric id that does not exist, instead of the
+reported **`200` with an empty body** (root cause per answer: *"a truthy check on the
+lookup result treats `0`/empty as found."*).
+
+**This change cannot be designed as written.** `widget-service` has no
+`GET /widgets/:id` route, no widget data store, and no lookup logic. Verified in
+`src/app.js`: exactly three GET routes are registered — `/health` (line 21), `/price`
+(line 22), `/price/bulk` (line 32) — and a repo-wide search for `widgets`, `findById`,
+`lookup`, and `not found` in `src/` returns **zero** matches. The reported symptom
+(`/widgets/:id` returns `200` empty for a numeric miss) therefore does not occur here:
+there is no such route, and the closest real behavior — an unknown path — already
+returns Express's default `404` (locked by `src/app.test.js:187`).
+
+- **Complexity**: **N/A (blocked).** No component, route, migration, or dependency
+  change is specifiable.
+- **Affected boundaries**: **None** until the blocker (E5/Q11) is resolved.
+- **Backward compatibility**: **Fully preserved** — no code is proposed; `/health`,
+  `/price`, `/price/bulk` remain byte-for-byte unchanged.
+
+## E2. Existing Architecture Context (what the report references vs. reality)
+
+| Reported element | Reality (verified) | Reference |
+|------------------|--------------------|-----------|
+| `GET /widgets/:id` route | **Does not exist.** Only `/health`, `/price`, `/price/bulk` are registered. | §5, §D6, `src/app.js:21,22,32` |
+| Widget data store / `findById`/`lookup` | **Does not exist.** Service is stateless; no persistence, models, or queries. | §7 (Not Applicable — DB), `PRD.md` §6/§10 |
+| "Truthy check on lookup result" root cause | **No such code path.** No lookup exists to mis-check. | grep `src/` → 0 matches |
+| Numeric-miss → `200` empty body | **Not reproducible.** Unknown paths already fall through to Express default `404`. | `src/app.test.js:187` |
+
+## E3. Change Impact Analysis
+
+Every architectural component was checked; because no change is specifiable, impact is
+**None** across the board (stated, not assumed):
+
+| Component | Impact | Basis |
+|-----------|--------|-------|
+| Data Model | None | No DB (§7); no schema/table/migration involved. |
+| API Surface | None | No endpoint added/modified/removed; `/health`, `/price`, `/price/bulk` unchanged (§5, §D6). |
+| Service Boundaries | None | Single Express process, no new service/module (§3). |
+| Auth / Authorization | None | No authz exists or is proposed (§6, `SECURITY_DESIGN.md`). |
+| Infrastructure | None | Same single Node process, same run/test (§8, `DEPLOYMENT_STRATEGY.md`). |
+| Security | None new | No new route ⇒ no new attack surface; posture unchanged. |
+| Performance | None | No code path changes. |
+| Testing | None | No test added/changed; `.coweave/manifest.yml` unchanged. |
+
+## E4. Proposed Architectural Changes
+
+**None can be specified in this iteration.** Authoring before/after design for
+`GET /widgets/:id` would require inventing the endpoint, its data source, and its
+success/not-found contract — designing a new feature from assumptions, which is
+explicitly disallowed and contradicts the reported "no new endpoints" scope.
+
+- **Data Model Changes**: None. Service is stateless (§7); no schema/migration.
+- **API Contract Changes**: None. No endpoint added, changed, or removed. The
+  API_CONTRACTS surface (`technical/API_CONTRACTS.md`) is unchanged.
+- **Security Impact**: None. No new permissions, roles, or attack surface.
+- **Infrastructure Changes**: None. No new resources, dependencies, or scaling.
+
+The three reconciliations that would each yield a *different* real delta are carried as
+decisions in E5 (Q11).
+
+## E5. Blocker & Reconciliation Decisions (mirrors PRD_DELTA §9)
+
+| ID | Question | Priority | Status | Architectural consequence when answered |
+|----|----------|----------|--------|------------------------------------------|
+| Q11 | The answered defect targets `GET /widgets/:id`, absent from `src/app.js` (only `/health`, `/price`, `/price/bulk`). Which is correct: (a) wrong repo/branch, (b) mislabeled defect on a real route, (c) genuinely new endpoint (= feature), (d) live-test artifact / no change? | HIGH (BLOCKER) | OPEN | (a) no delta here; (b) rewrite E4 as a real bug-fix delta on `/price` or `/price/bulk`; (c) reclassify as a **feature** delta requiring a data-source design (contradicts §7 statelessness); (d) close with no change. |
+| Q12 | If (b): restate expected vs. actual against a real route. Candidates: `/price` returns `200 { "total": null }` for non-numeric input (`src/app.js:8`); unknown routes already `404` (`app.test.js:187`). | HIGH | OPEN | Determines which existing handler/contract the delta modifies and which regression tests apply. |
+| Q13 | If (c): define the new endpoint's data source (service is stateless — `PRD.md` §6/§10), success shape, and not-found shape. | HIGH | OPEN | Introduces a persistence/data-source component absent from §7 — a substantial architecture change, not a bug fix. |
+
+## E6. Testing Strategy for the Change
+
+- **This iteration**: no tests added or changed (no code change). The test surface is
+  unchanged, so **`.coweave/manifest.yml` needs no amendment** (`npm install && npm test`
+  already covers `src/`).
+- **When reconciled (b)** — real-route defect: add a `node:test` case for the corrected
+  response using the existing `withServer` HTTP harness (`src/app.test.js:19`); keep all
+  current tests green.
+- **When reconciled (c)** — new endpoint: full feature coverage (success, numeric miss →
+  `404`, malformed id) plus regression over the three existing routes.
+- **Regression baseline (must stay green regardless)**: the full `src/app.test.js`
+  suite, including the unknown-route `404` lock (`:187`) and the documented `/price`
+  `NaN → { total: null }` passthrough (`:180`).
+
+## E7. Migration & Rollback
+
+- **Migration**: None — no change is made (stateless service; no schema).
+- **Rollback**: N/A — nothing to roll back. This TDD section is additive documentation
+  and carries no product/runtime risk.
+- **Feature flag**: N/A — no code path introduced.
+
+## E8. Risks & Mitigations
+
+| Risk | Severity | Mitigation |
+|------|----------|-----------|
+| Fabricating a `/widgets/:id` fix invents a whole widget-lookup feature (data store, route, contract) not requested and contradicting "no new endpoints" | HIGH | **Do not fabricate.** Block the delta; surface Q11 for reconciliation (E5). |
+| Proceeding to dev on a non-existent endpoint wastes effort / ships dead code | MEDIUM | No implementation-ready design is emitted; status BLOCKED propagates downstream. |
+| Baseline behavior accidentally altered while "fixing" a phantom bug | LOW | No code change proposed; `/health`, `/price`, `/price/bulk` explicitly untouched (E3). |
+
+## E9. Delta Coverage
+
+Full architectural impact of issue #2 as it can be honestly assessed: **no specifiable
+change** because the target endpoint does not exist. Every component was checked (E3);
+all impacts are None. The blocker and its three reconciliation paths are documented
+(E5). **Not implementation-ready — resolve Q11 before any architect/dev work.** Once a
+real, code-grounded target is confirmed, the next iteration will replace E4 with a
+concrete delta (real-route bug fix) or, if a new endpoint is genuinely intended, a
+feature-scoped design including the currently-absent data-source component.

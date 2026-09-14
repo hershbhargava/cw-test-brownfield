@@ -1,24 +1,36 @@
 {
   "iteration": 1,
-  "role": "prd-generator-ai",
-  "status": "completed",
-  "workflow_mode": "new_feature_or_bug_fix",
-  "output_mode": "questionnaire",
-  "timestamp": "2026-09-14T21:56:33Z",
-  "prd_name": "Bug1 live-test: numeric issueNumber",
-  "design_mode": "NEW_FEATURE_OR_BUG_FIX",
-  "depth_mode": "detailed",
-  "scores": {
-    "coverage_score": 10,
-    "answer_quality_score": null,
-    "confidence_score": 20,
-    "quality_score": 80
+  "role": "architect-ai",
+  "status": "blocked",
+  "timestamp": "2026-09-14T22:20:20.602Z",
+  "primary_issue": 2,
+  "issues_designed": [],
+  "design_mode": "new_application",
+  "mode": "REFINEMENT",
+  "quality_score": "N/A - blocked",
+  "blocker": {
+    "id": "Q11",
+    "severity": "HIGH",
+    "summary": "Authoritative issue-2 answers describe a defect in GET /widgets/:id, an endpoint that does not exist in this repository. Only /health (src/app.js:21), /price (src/app.js:22), and /price/bulk (src/app.js:32) are registered; repo-wide search for widgets/findById/lookup in src/ returns zero matches. No architectural change can be specified without fabricating a widget-lookup feature, which contradicts the answer's own 'no new endpoints' scope.",
+    "reconciliation_options": [
+      "(a) wrong repo/branch - no delta here",
+      "(b) mislabeled defect on a real route (/price or /price/bulk) - restate then author real bug-fix delta",
+      "(c) genuinely new widget-lookup endpoint - reclassify as feature; requires data-source design (contradicts stateless §7)",
+      "(d) live-test artifact - close with no code change"
+    ],
+    "next_step": "Answer Q11 (and Q12/Q13 as applicable) in PRD_DELTA_issue-2.md, then re-run."
   },
-  "word_count": 1050,
-  "sections_count": 14,
-  "assumptions_count": 4,
-  "open_questions_count": 10,
-  "input_documents": ["/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-2/repos/hershbhargava/cw-test-brownfield/hershbhargava/cw-test-brownfield/issues/issue-2.json"],
-  "files_created": ["docs/requirements/PRD_DELTA_issue-2-QandA.md"],
-  "commit_hash": "5119af035ca4b691507a5544f008a0d19ec8ac1a"
+  "files_created": [
+    "docs/design/TDD.md"
+  ],
+  "tdd_delta_section": "Issue #2 architecture delta (E1-E9) appended to docs/design/TDD.md; documents blocked status, verified absence of GET /widgets/:id, zero-impact component analysis, and Q11 reconciliation paths. No fabricated fix.",
+  "optional_docs_skipped": {
+    "SYSTEM_ARCHITECTURE.md": "no change - no architectural delta",
+    "DATABASE_SCHEMA.md": "not applicable - stateless service, no persistence",
+    "API_CONTRACTS.md": "no change - no endpoint added/modified/removed",
+    "SECURITY_DESIGN.md": "no change - no new attack surface",
+    "DEPLOYMENT_STRATEGY.md": "no change - same process/run/test"
+  },
+  "commit_hash": "<filled_after_commit>",
+  "iteration_mode": "CE_STUDIO"
 }
