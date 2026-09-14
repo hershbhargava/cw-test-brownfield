@@ -1,0 +1,25 @@
+{
+  "iteration": 3,
+  "role": "prd-generator-ai",
+  "status": "blocked",
+  "workflow_mode": "new_feature_or_bug_fix",
+  "output_mode": "prd_delta",
+  "timestamp": "2026-09-14T22:12:00Z",
+  "prd_name": "Bug1 live-test: numeric issueNumber",
+  "design_mode": "NEW_FEATURE_OR_BUG_FIX",
+  "depth_mode": "detailed",
+  "scores": {
+    "coverage_score": 40,
+    "answer_quality_score": 25,
+    "confidence_score": 20,
+    "quality_score": 80
+  },
+  "blocker": "Reconciliation questions Q11-Q13 from iteration 2 remain UNANSWERED. The authoritative answers describe a defect in GET /widgets/:id, which does not exist in src/app.js (only /health, /price, /price/bulk; repo-wide grep for widgets/findById/lookup = 0 matches). PRD_DELTA_issue-2.md was written as required, but as a truthful 'blocked / cannot-specify' delta that documents the contradiction rather than fabricating a fix for non-existent code.",
+  "word_count": 1250,
+  "sections_count": 10,
+  "assumptions_count": 0,
+  "open_questions_count": 3,
+  "input_documents": ["/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-2/repos/hershbhargava/cw-test-brownfield/hershbhargava/cw-test-brownfield/issues/issue-2.json"],
+  "files_created": ["docs/requirements/PRD_DELTA_issue-2.md"],
+  "commit_hash": "ecbf7c06fd8c7df3313bd01d3938f1d5da165c4b"
+}
