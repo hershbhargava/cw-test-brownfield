@@ -1,0 +1,24 @@
+{
+  "iteration": 1,
+  "role": "prd-generator-ai",
+  "status": "completed",
+  "workflow_mode": "new_feature_or_bug_fix",
+  "output_mode": "questionnaire",
+  "timestamp": "2026-09-14T21:56:33Z",
+  "prd_name": "Bug1 live-test: numeric issueNumber",
+  "design_mode": "NEW_FEATURE_OR_BUG_FIX",
+  "depth_mode": "detailed",
+  "scores": {
+    "coverage_score": 10,
+    "answer_quality_score": null,
+    "confidence_score": 20,
+    "quality_score": 80
+  },
+  "word_count": 1050,
+  "sections_count": 14,
+  "assumptions_count": 4,
+  "open_questions_count": 10,
+  "input_documents": ["/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-2/repos/hershbhargava/cw-test-brownfield/hershbhargava/cw-test-brownfield/issues/issue-2.json"],
+  "files_created": ["docs/requirements/PRD_DELTA_issue-2-QandA.md"],
+  "commit_hash": "5119af035ca4b691507a5544f008a0d19ec8ac1a"
+}
