@@ -5,9 +5,12 @@
 > workflows (architect, dev, QA) use this to distinguish PRD claims that rest on
 > assumptions from those grounded directly in code.
 >
-> **Iteration**: 3 (CONTINUATION). Several iteration-1 assumptions have been
-> **superseded by the code**, which now implements `GET /price/bulk`. Superseded
-> entries below are marked and kept for traceability.
+> **Iteration**: 4 (CONTINUATION). Several iteration-1 assumptions were
+> **superseded by the code**, which now implements `GET /price/bulk`; superseded
+> entries below are marked and kept for traceability. Iteration 4 is a refinement
+> pass — the code, tests, TDDs, and issue are unchanged since iteration 3, so every
+> resolution below stands as re-verified against a fresh read of `src/app.js` and
+> `src/app.test.js`. No new ambiguities surfaced.
 >
 > **Sources**: GitHub issue #1 (scope guidance only), `src/app.js`,
 > `src/app.test.js`, `package.json`, `README.md`, and the reconstructed TDDs under

@@ -10,8 +10,16 @@
 > `docs/design/technical/SYSTEM_ARCHITECTURE.md`, `.../API_CONTRACTS.md`,
 > `.../SECURITY_DESIGN.md`, `.../DEPLOYMENT_STRATEGY.md`).
 >
-> **Iteration**: 3 · **Coverage**: complete for this repository (two source files,
-> ~74 lines of app code + a 39-test suite).
+> **Iteration**: 4 · **Coverage**: complete for this repository (two source files —
+> `src/app.js` 75 lines + `src/app.test.js` 278 lines / 39 runtime tests).
+>
+> **Iteration-4 note (refinement)**: No change to the ground truth since iteration 3
+> — `src/app.js`, `src/app.test.js`, the five reconstructed TDDs under
+> `docs/design/**`, and GitHub issue #1 are all unchanged. This pass re-verifies
+> every citation against a fresh read of the code, confirms the test-suite size (33
+> top-level `test(...)` registrations plus a 3-method `for`-loop over
+> `['POST','PUT','DELETE']` generating 6 more = **39 runtime tests**), and carries
+> the content forward unchanged. The substantive delta remains the one below.
 >
 > **Iteration-3 delta (vs. iteration 1)**: The bulk-pricing endpoint
 > `GET /price/bulk` — previously listed as Out of Scope / a feature gap — is now
