@@ -1,56 +1,150 @@
 {
   "iteration": 3,
-  "phase": "qa",
-  "role": "qa-test-review",
+  "role": "prd-generator-ai",
   "status": "completed",
-  "review_focus": "test_quality",
-  "repository": "hershbhargava/cw-test-brownfield",
-  "issue": 1,
-  "branch": "feature/issue-1",
-  "verdict": "APPROVE",
-  "quality_score": 92,
-  "deployment_ready": true,
-  "coverage_gate": "PASS",
-  "test_source": {
-    "tests_total": 39,
-    "tests_passed": 39,
-    "tests_failed": 0,
-    "tests_skipped": 0,
-    "pass_rate": 100,
-    "result_source": "infra-counts",
-    "authoritative_metadata_path": "prd/iteration-3/metadata.json (qa-test-execution, 2026-08-26T06:13:03.262Z)"
+  "workflow_mode": "continuation",
+  "timestamp": "2026-09-17T16:47:53Z",
+  "prd_name": "Add bulk pricing endpoint [refreshed via broker]",
+  "design_mode": "NEW_APPLICATION",
+  "depth_mode": "detailed",
+  "reconstruction": true,
+  "source_of_truth": "code_plus_tdd",
+  "scores": {
+    "coverage_score": 98,
+    "answer_quality_score": 95,
+    "confidence_score": 96,
+    "quality_score": 96
   },
-  "coverage": {
-    "lines": 100,
-    "branches": 96.55,
-    "functions": 100,
-    "statements": 100,
-    "source": "lcov",
-    "threshold": 70,
-    "gate": "PASS",
-    "uncovered_branch_note": "src/app.js:74 require.main===module entrypoint guard, structurally unreachable under node --test; treated as benign, not a gap (same finding as prior two review passes, line number shifted from 66 due to Q2a code insertion)"
-  },
-  "findings": {
-    "high": 0,
-    "medium": 0,
-    "low": 2,
-    "resolved_since_prior_review": [
-      "HIGH: Aggregate sum overflow in GET /price/bulk — fixed at src/app.js:63-65 (TDD \u00a7D3/Q2a guard), tested at src/app.test.js:272-277, confirmed passing in authoritative qa-test-execution run (ok 39)"
+  "word_count": 3429,
+  "sections_count": 14,
+  "assumptions_count": 3,
+  "open_questions_count": 6,
+  "input_documents": [
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/hershbhargava/cw-test-brownfield/issues/issue-1.json",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/src/app.js",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/src/app.test.js",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/package.json",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/README.md",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/TDD.md",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/SYSTEM_ARCHITECTURE.md",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/API_CONTRACTS.md",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/SECURITY_DESIGN.md",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/design/technical/DEPLOYMENT_STRATEGY.md",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/requirements/PRD.md",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/requirements/PRD_issue-1-QandA.md"
+  ],
+  "files_created": [
+    "docs/requirements/PRD.md",
+    "docs/requirements/PRD_issue-1-QandA.md",
+    "work-in-progress/issue-1/external-memory/prd/iteration-3/metadata.json"
+  ],
+  "coverage_ledger": {
+    "note": "Traceability from every code-observable capability/guard to the PRD section that documents it. Grounded in src/app.js + src/app.test.js; no fabricated line numbers.",
+    "code_features_documented": [
+      {
+        "capability": "GET /health liveness",
+        "source_symbol": "src/app.js app.get('/health')",
+        "prd_refs": ["\u00a75 US-6", "\u00a76 In Scope", "\u00a77 FR-8", "\u00a714.2"]
+      },
+      {
+        "capability": "GET /price single discounted total",
+        "source_symbol": "src/app.js app.get('/price') + priceWidget",
+        "prd_refs": ["\u00a75 US-1", "\u00a76 In Scope", "\u00a77 FR-1..FR-2,FR-5,FR-6", "\u00a714.2"]
+      },
+      {
+        "capability": "10% volume discount at qty>=100",
+        "source_symbol": "src/app.js priceWidget discount",
+        "prd_refs": ["\u00a72", "\u00a77 FR-2"]
+      },
+      {
+        "capability": "qty<=0 rejection",
+        "source_symbol": "src/app.js priceWidget qty guard",
+        "prd_refs": ["\u00a75 US-2", "\u00a77 FR-3"]
+      },
+      {
+        "capability": "finiteness guard (reject \u00b1Infinity, keep NaN passthrough)",
+        "source_symbol": "src/app.js priceWidget finiteness loop",
+        "prd_refs": ["\u00a75 US-3", "\u00a77 FR-4", "\u00a711", "\u00a713 Q3"]
+      },
+      {
+        "capability": "GET /price/bulk summed multi-line total",
+        "source_symbol": "src/app.js app.get('/price/bulk')",
+        "prd_refs": ["\u00a75 US-4", "\u00a76 In Scope", "\u00a77 FR-BULK-1..7", "\u00a714.2"]
+      },
+      {
+        "capability": "bulk items-required guard",
+        "source_symbol": "src/app.js /price/bulk typeof raw check",
+        "prd_refs": ["\u00a77 FR-BULK-1"]
+      },
+      {
+        "capability": "bulk 50-item cap",
+        "source_symbol": "src/app.js MAX_BULK_ITEMS",
+        "prd_refs": ["\u00a77 FR-BULK-2", "\u00a78 Resource safety", "\u00a711"]
+      },
+      {
+        "capability": "bulk malformed-token rejection",
+        "source_symbol": "src/app.js /price/bulk parts.length check",
+        "prd_refs": ["\u00a77 FR-BULK-3"]
+      },
+      {
+        "capability": "bulk per-field finiteness (stricter than /price)",
+        "source_symbol": "src/app.js /price/bulk Number.isFinite fields",
+        "prd_refs": ["\u00a77 FR-BULK-4", "\u00a713 Q2"]
+      },
+      {
+        "capability": "bulk running-sum overflow guard (Q2a)",
+        "source_symbol": "src/app.js /price/bulk Number.isFinite(total)",
+        "prd_refs": ["\u00a77 FR-BULK-6", "\u00a711", "\u00a713 Q2a"]
+      },
+      {
+        "capability": "bulk all-or-nothing aggregate response",
+        "source_symbol": "src/app.js /price/bulk +total.toFixed(2)",
+        "prd_refs": ["\u00a75 US-5", "\u00a77 FR-BULK-7"]
+      },
+      {
+        "capability": "JSON-only, GET-only interface; unknown routes 404",
+        "source_symbol": "src/app.js res.json / Express default",
+        "prd_refs": ["\u00a76", "\u00a77 FR-9", "\u00a79"]
+      },
+      {
+        "capability": "importable module (test-without-listen)",
+        "source_symbol": "src/app.js module.exports + require.main guard",
+        "prd_refs": ["\u00a76 In Scope", "\u00a78 Testability"]
+      }
     ],
-    "low_detail": [
-      "No explicit Content-Type header assertion on JSON responses (optional, informational)",
-      "No single test combining the 50-item cap boundary with the >=100-qty discount threshold (optional, informational)"
+    "verified_absent_documented_as_out_of_scope": [
+      "per-line breakdown in bulk response",
+      "bulk via POST/body",
+      "currency/locale/tax",
+      "persistence/database",
+      "auth/authz/RBAC",
+      "rate limiting / CORS / helmet / in-app TLS",
+      "env-based config (port hardcoded 3000)",
+      "logging/metrics/tracing",
+      "frontend/UI",
+      "containerization/CI-CD/IaC"
+    ],
+    "test_signal": {
+      "tests_total": 39,
+      "tests_passing": 39,
+      "coverage": { "lines": 100, "branches": 96.55, "functions": 100, "statements": 100 },
+      "sole_uncovered_branch": "require.main === module entrypoint guard (not exercised under test)",
+      "source": "authoritative qa-test-execution run"
+    },
+    "supersessions": [
+      {
+        "item": "GET /price/bulk",
+        "was": "Out of Scope / feature gap (iteration 1 PRD \u00a76/\u00a713)",
+        "now": "shipped In-Scope feature (iteration 3 PRD \u00a75/\u00a76/\u00a77)",
+        "reason": "code now implements the route; code is source of truth"
+      },
+      {
+        "item": "API_CONTRACTS.md \u00a73 'Designed (not yet implemented)' label",
+        "was": "labels bulk as not implemented",
+        "now": "treated as stale; code implements it",
+        "reason": "code is source of truth over doc label"
+      }
     ]
   },
-  "code_test_state": "Q2a aggregate-overflow guard added since prior review (commits 34836a7, cc621b5), now formalized upstream as TDD \u00a7D3/Q2a with matching API_CONTRACTS.md example (commits d863145, f9200b8). Verified via git log and direct file read: src/app.js and src/app.test.js match the reviewed diff exactly; zero regressions in the 38 previously-passing tests.",
-  "output_artifacts": [
-    "TEST_QUALITY_REPORT.md",
-    "TEST_GAP_ANALYSIS.md",
-    "COVERAGE_GAP_ANALYSIS.md",
-    "EDGE_CASE_REVIEW.md",
-    "ITERATION-4-GUIDANCE.md",
-    "GITHUB_COMMENT.md",
-    "metadata.json"
-  ],
-  "timestamp": "2026-08-26T06:20:00.000Z"
+  "commit_hash": null
 }
