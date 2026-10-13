@@ -5,16 +5,29 @@
 > (`docs/requirements/PRD.md`). It documents ONLY the new bulk-pricing capability and
 > its ripple effects — it does not restate the whole product.
 >
-> **Iteration**: 5 · **Issue**: #1 "Add bulk pricing endpoint" · **Branch**:
+> **Iteration**: 6 · **Issue**: #1 "Add bulk pricing endpoint" · **Branch**:
 > `feature/issue-1`
 >
-> **Status change since iteration 2**: `GET /price/bulk` is now **implemented and
-> shipped** in `src/app.js` and fully covered by `src/app.test.js` (39 runtime tests,
-> 100% line coverage). The six open questions from iteration 2 (Q1–Q6) are **RESOLVED**
-> by the delivered code and the baseline reconstruction Q&A
-> (`docs/requirements/PRD_issue-1-QandA.md`). This iteration refreshes the delta from a
-> "to-be-built" spec into a "describes-what-shipped" spec and records the resolved
-> decisions.
+> **Status**: `GET /price/bulk` is **implemented and shipped** in `src/app.js` and
+> fully covered by `src/app.test.js` (39 runtime tests, 100% line coverage). The six
+> open questions from iteration 2 (Q1–Q6) are **RESOLVED** by the delivered code and
+> the baseline reconstruction Q&A (`docs/requirements/PRD_issue-1-QandA.md`). This
+> delta describes what shipped and records the resolved decisions.
+>
+> **Iteration-6 changes (review follow-up)**: Resolves the four gaps raised in PRD
+> review iteration 4 against the iteration-5 delta:
+> - **GAP-DIFF-001 (HIGH)** — the delta's Functional-Requirement IDs now **reuse the
+>   authoritative `PRD.md` §7 `FR-BULK-1..7` numbering verbatim** (see §6). The two
+>   delta-only requirements (the umbrella endpoint statement and the dedicated tests
+>   requirement) are marked as **proposed additions `FR-BULK-8`/`FR-BULK-9`** to be
+>   folded into `PRD.md` on its next refresh, and §10.2 no longer claims `PRD.md`
+>   already "gains" them.
+> - **GAP-DIFF-002 (MEDIUM)** — the NFR subsection is retitled "New / extended
+>   non-functional considerations" (nothing is *modified*).
+> - **GAP-DIFF-003 (LOW)** — the rollback plan now names the actual four-commit range
+>   and the shared-`priceWidget` caveat.
+> - **GAP-DIFF-004 (LOW)** — error-message strings are now declared part of the
+>   `/price/bulk` contract.
 >
 > **Baseline product** (unchanged, see `PRD.md`): a stateless Node.js/Express
 > microservice exposing `GET /health` and `GET /price?qty=&unit=`, with the pricing
@@ -222,43 +235,74 @@ built-in `node:test` and `fetch` against an ephemeral port (no new dependency).
 
 ## 6. Requirements
 
-### New functional requirements (all DELIVERED)
-- **FR-BULK-1 — Bulk endpoint.** `GET /price/bulk?items=<qty:unit,…>` returns the
-  summed discounted total across all provided line items as `200 { "total": <number> }`.
-- **FR-BULK-2 — Per-line pricing via existing rule.** Each line is priced by the
-  existing `priceWidget(qty, unit)` — 10% discount at `qty ≥ 100`, else none — and the
-  results are summed. The discount is applied **per line**, never to the aggregate.
-- **FR-BULK-3 — Input parsing.** `items` is a comma-separated list; each token is
-  exactly `qty:unit`, both coerced via `Number(...)`. Tokens that are not exactly two
-  `:`-separated parts (including empty tokens from adjacent/trailing delimiters) are
-  rejected with `400 { "error": "invalid item '<token>'" }`.
-- **FR-BULK-4 — Finiteness (stricter than `/price`).** A field that coerces to `NaN`
-  or `±Infinity` (including overflow of long digit strings) rejects the whole request
-  with `400 invalid item '<token>'`. The bulk sum can never be a nonsensical
-  `null`/`Infinity`.
-- **FR-BULK-5 — Item cap.** More than `MAX_BULK_ITEMS` (50) tokens →
-  `400 { "error": "too many items (max 50)" }`; exactly 50 is accepted.
-- **FR-BULK-6 — Required `items`.** Missing, empty, or non-string `items` (e.g. a
-  repeated param coerced to an array) → `400 { "error": "items is required" }`.
-- **FR-BULK-7 — Aggregate-overflow guard.** The running sum is re-validated with
-  `Number.isFinite` after each line; overflow to `Infinity` →
-  `400 { "error": "total is too large" }` (fail-fast, all-or-nothing).
-- **FR-BULK-8 — All-or-nothing response.** On success, return the sum rounded once at
-  the end (`+total.toFixed(2)`); any single invalid line fails the whole request.
-- **FR-BULK-9 — Tests.** Automated `node:test` coverage for every requirement above,
-  plus regression of `/price`, `/health`, 404, and GET-only verbs (issue #1: "Include
-  tests").
+> **Numbering note (GAP-DIFF-001 fix)**: The functional-requirement IDs below are the
+> **same IDs already published in `PRD.md` §7** (`FR-BULK-1 … FR-BULK-7`), reused
+> verbatim so that an "FR-BULK-n" reference means the identical requirement in both the
+> authoritative product PRD and this delta. `FR-BULK-8` and `FR-BULK-9` are **proposed
+> additions introduced by this delta** — they do not yet exist in `PRD.md` and should be
+> folded into `PRD.md` §7 on its next refresh (see §10.2). They are flagged
+> *(delta-proposed)* below.
 
-### Modified non-functional requirements
+### New functional requirements (all DELIVERED) — IDs aligned to `PRD.md` §7
+
+- **FR-BULK-1 — Presence.** `items` must be a non-empty string; a missing, empty, or
+  non-string `items` (e.g. a repeated param coerced to an array) yields
+  `400 { "error": "items is required" }`. (`src/app.js:37`)
+- **FR-BULK-2 — Item cap.** At most `MAX_BULK_ITEMS` (50) comma-separated tokens; more
+  yields `400 { "error": "too many items (max 50)" }`; exactly 50 is accepted.
+  (`src/app.js:31,41`)
+- **FR-BULK-3 — Token shape.** Each token must split on `:` into exactly two parts
+  (`qty:unit`); otherwise `400 { "error": "invalid item '<token>'" }` (this also
+  rejects empty tokens from adjacent/trailing delimiters). (`src/app.js:47`)
+- **FR-BULK-4 — Per-field finiteness (stricter than `/price`).** Each parsed
+  `qty`/`unit` must satisfy `Number.isFinite`; a `NaN` or `±Infinity` field (including
+  overflow of long digit strings) yields `400 { "error": "invalid item '<token>'" }`.
+  Deliberate divergence from `/price`'s `NaN` pass-through so a bulk aggregate is never
+  a nonsensical `null` (Q&A Q2). (`src/app.js:54`)
+- **FR-BULK-5 — Per-line pricing via the existing rule.** Each valid line is priced by
+  the existing `priceWidget(qty, unit)`, inheriting `PRD.md` FR-1..FR-4 — the 10%
+  discount at `qty ≥ 100` (else none) and the `qty <= 0` → `400 { "error": "qty must be
+  positive" }` path. The discount is applied **per line**, never to the aggregate.
+  (`src/app.js:57`)
+- **FR-BULK-6 — Running-sum overflow guard (Q2a).** After adding each line, the running
+  `total` is re-validated with `Number.isFinite`; overflow to `Infinity` →
+  `400 { "error": "total is too large" }` (fail-fast, all-or-nothing). (`src/app.js:63`)
+- **FR-BULK-7 — All-or-nothing aggregate.** On success, respond
+  `200 { "total": +total.toFixed(2) }` (summed once, rounded once at the end); any
+  single failing line rejects the entire request with no partial total. (`src/app.js:67`)
+
+### New functional requirements proposed by this delta (not yet in `PRD.md`)
+
+- **FR-BULK-8 — Bulk endpoint (umbrella) *(delta-proposed)*.** `GET /price/bulk?items=<qty:unit,…>`
+  exists as a single read-only route that returns the summed discounted total across
+  all provided line items as `200 { "total": <number> }`. This is an umbrella statement
+  over FR-BULK-1..7; fold into `PRD.md` §7 on next refresh.
+- **FR-BULK-9 — Tests *(delta-proposed)*.** Automated `node:test` coverage exists for
+  every requirement above, plus regression of `/price`, `/health`, 404, and GET-only
+  verbs (issue #1: "Include tests"). Fold into `PRD.md` §7 on next refresh.
+
+### New / extended non-functional considerations
+
+*(No existing NFR in `PRD.md` §8 is modified; the items below are new considerations
+that apply only to the new `/price/bulk` route — consistent with §1's "Modified
+features: 0".)*
+
 - **Performance**: constant-time per line; per-request work bounded by the 50-item cap.
   Other NFRs in `PRD.md` §8 are unchanged.
 - **Security**: unchanged posture (no auth/rate limiting added). The 50-item cap and
-  finiteness guards bound the bulk DoS surface noted in Q&A/§D7.
+  finiteness guards bound the bulk DoS surface noted in `PRD.md` §11.
 
 ### Backward compatibility requirements
-- Existing `/price` and `/health` contracts remain byte-for-byte compatible
-  (verified by regression tests). The change is additive; no current consumer observes
-  any difference.
+- Existing `/price` and `/health` contracts remain byte-for-byte compatible — same
+  status codes, same response envelopes, same legacy `/price` `NaN → { "total": null }`
+  pass-through (verified by regression tests). The change is additive; no current
+  consumer observes any difference.
+- **Error-string stability (GAP-DIFF-004 fix)**: the specific `error` message text
+  enumerated in §10.3 for `/price/bulk` (`"items is required"`, `"too many items (max
+  50)"`, `"invalid item '<token>'"`, `"qty must be positive"`, `"total is too large"`)
+  is treated as **part of the `/price/bulk` contract** — it is asserted verbatim by
+  `src/app.test.js`. Changing this wording requires a deliberate, tested decision, not
+  an incidental edit, because external callers may string-match on it.
 
 ### Accessibility requirements
 - **N/A** — API-only service, no UI (`PRD.md` §9).
@@ -270,9 +314,21 @@ built-in `node:test` and `fetch` against an ephemeral port (no new dependency).
 - **Data migration**: none — stateless service, no schema (`PRD.md` §14.1).
 - **Feature flag / gradual rollout**: not required. The route is inert until called;
   existing traffic is unaffected.
-- **Rollback plan**: revert the commit that adds the `/price/bulk` route and its tests.
-  Because the endpoint is stateless and additive, removing it has **no data or
-  compatibility consequences** — callers fall back to N× `/price` calls.
+- **Rollback plan (GAP-DIFF-003 fix)**: the feature was introduced and hardened across
+  **four commits**, not one — revert the commit range
+  `fcd74b2`..`e6e6a8d`:
+  - `fcd74b2` feat(price): add GET /price/bulk endpoint (issue #1)
+  - `2257de0` fix(price): reject non-finite input on /price and /price/bulk (iter 4)
+  - `34836a7` feat(issue-1): add Q2a aggregate-overflow guard to /price/bulk
+  - `e6e6a8d` Add GET /price/bulk endpoint (issue #1) (#4)
+
+  **Caveat**: `2257de0` also touches the shared `priceWidget` function used by
+  `/price` (the `±Infinity` finiteness guard, `PRD.md` FR-4). Before rolling back,
+  confirm whether reverting that commit is intended to also drop the intentionally-added
+  `/price` `Infinity` rejection; if `/price`'s guard must stay, revert only the
+  bulk-specific commits (`fcd74b2`, `34836a7`, `e6e6a8d`) and the bulk portion of
+  `2257de0`. Because the endpoint is stateless and additive, removing it has **no data
+  or compatibility consequences** — callers fall back to N× `/price` calls.
 - **Communication plan**: the new endpoint is documented in `README.md` (max 50 items,
   URL-encode `items`, all-or-nothing `400`). No breaking-change notice needed.
 
@@ -300,7 +356,7 @@ built-in `node:test` and `fetch` against an ephemeral port (no new dependency).
   `/price/bulk` → `404` (GET-only surface).
 - The three existing `priceWidget` unit tests still pass.
 
-**Observed signal** (authoritative QA run, carried from iteration 4): 39 runtime tests
+**Observed signal** (authoritative QA run, carried from `PRD.md` §3): 39 runtime tests
 pass; 100% line/statement/function coverage; 96.55% branch (the sole uncovered branch
 is the `require.main === module` entrypoint guard, not exercised under test).
 
@@ -323,11 +379,14 @@ baseline Q&A. They are kept below for traceability.
 
 **Decided (from inputs)**:
 - Reuse `priceWidget` as-is — required by issue #1; **no new discount tiers** (Q&A Q8).
-  → FR-BULK-2.
+  → FR-BULK-5.
 - Additive, backward-compatible; no versioning. → §5.3.
-- Tests required and delivered. → FR-BULK-9.
+- Tests required and delivered. → FR-BULK-9 *(delta-proposed)*.
 
-**No open questions remain for this change.**
+**Review follow-up (iteration 6)** — all four PRD-review-iteration-4 gaps are addressed
+in this delta: GAP-DIFF-001 (FR-BULK IDs re-aligned to `PRD.md`, §6 + §10.2),
+GAP-DIFF-002 (NFR subsection retitled, §6), GAP-DIFF-003 (rollback commit range, §7),
+GAP-DIFF-004 (error-string stability, §6). **No open questions remain for this change.**
 
 ---
 
@@ -336,12 +395,20 @@ baseline Q&A. They are kept below for traceability.
 ### 10.1 Related tickets / issues
 - GitHub issue #1 — "Add bulk pricing endpoint" (primary and only source of this
   change). Architecture iteration 4 complete (comment on issue #1, commit `5e9da36d`).
+- PRD review iteration 4 — gap analysis that drove the iteration-6 corrections
+  (`work-in-progress/issue-1/external-memory/prd-review/iteration-4/PRD_GAP_ANALYSIS.md`).
 
 ### 10.2 Existing PRD sections affected
-- `PRD.md` §5 (User Stories) — US-BULK-1/US-BULK-2 (US-4/US-5 in the full PRD).
-- `PRD.md` §6 (Scope & Features) — "Bulk / multi-line-item pricing" is now **In Scope**.
-- `PRD.md` §7 (Functional Requirements) — FR-BULK-1..9.
-- `PRD.md` §14.2 (API Surface) — the `GET /price/bulk` row.
+- `PRD.md` §5 (User Stories) — US-BULK-1/US-BULK-2 correspond to the already-published
+  **US-4** (price a whole multi-line order) and **US-5** (all-or-nothing rejection).
+- `PRD.md` §6 (Scope & Features) — "Bulk / multi-line-item pricing" is already **In
+  Scope** (promoted in `PRD.md` iteration 3).
+- `PRD.md` §7 (Functional Requirements) — **already documents `FR-BULK-1..7`** for this
+  capability (published in `PRD.md` iterations 3–4). This delta reuses those seven IDs
+  verbatim (§6) and **proposes two additions**, `FR-BULK-8` (umbrella endpoint) and
+  `FR-BULK-9` (tests), which should be folded into `PRD.md` §7 on its next refresh —
+  `PRD.md` does **not** yet contain them.
+- `PRD.md` §14.2 (API Surface) — the `GET /price/bulk` row (already present).
 
 ### 10.3 API surface after this change
 
@@ -349,12 +416,16 @@ baseline Q&A. They are kept below for traceability.
 |--------|------|---------|-------|
 | GET | `/health` | `200 { "ok": true }` | — |
 | GET | `/price?qty=&unit=` | `200 { "total": <number> }` | `400 { "error": "qty must be positive" }` / `400 "qty and unit must be finite"`; `NaN → 200 { "total": null }` (legacy) |
-| **GET** | **`/price/bulk?items=qty:unit,…`** | **`200 { "total": <summed number> }`** | **`400 items is required` / `too many items (max 50)` / `invalid item '<token>'` / `qty must be positive` / `total is too large`** |
+| **GET** | **`/price/bulk?items=qty:unit,…`** | **`200 { "total": <summed number> }`** | **`400` one of: `items is required` · `too many items (max 50)` · `invalid item '<token>'` · `qty must be positive` · `total is too large`** |
+
+*(The exact `error` strings above are contractual for `/price/bulk` — see §6
+"Error-string stability".)*
 
 ### 10.4 Supporting references
-- `src/app.js` → `priceWidget`, `/price`, `/health`, `/price/bulk` handlers.
+- `src/app.js` → `priceWidget`, `/price`, `/health`, `/price/bulk` handlers
+  (lines cited inline in §6 and §9).
 - `src/app.test.js` → `node:test` suite (39 runtime tests).
-- `docs/requirements/PRD.md` → baseline product requirements.
+- `docs/requirements/PRD.md` → baseline product requirements (authoritative FR-BULK-1..7).
 - `docs/requirements/PRD_issue-1-QandA.md` → baseline reconstruction Q&A
   (Q2/Q2a/Q3/Q6/Q8 inform the resolutions above).
 - `docs/design/technical/API_CONTRACTS.md` → existing contract & `NaN` edge behaviour.

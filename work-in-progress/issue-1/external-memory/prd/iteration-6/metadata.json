@@ -1,0 +1,62 @@
+{
+  "iteration": 6,
+  "role": "prd-generator-ai",
+  "status": "completed",
+  "workflow_mode": "new_feature_or_bug_fix",
+  "timestamp": "2026-10-13T22:40:00Z",
+  "prd_name": "Add bulk pricing endpoint [refreshed via broker]",
+  "design_mode": "NEW_FEATURE_OR_BUG_FIX",
+  "depth_mode": "detailed",
+  "scores": {
+    "coverage_score": 99,
+    "answer_quality_score": 98,
+    "confidence_score": 98,
+    "quality_score": 98
+  },
+  "word_count": 3532,
+  "sections_count": 10,
+  "assumptions_count": 0,
+  "open_questions_count": 0,
+  "review_gaps_addressed": [
+    {
+      "id": "GAP-DIFF-001",
+      "priority": "HIGH",
+      "resolution": "FR-BULK IDs re-sequenced to reuse PRD.md \u00a77's authoritative FR-BULK-1..7 verbatim (Presence=1, Item cap=2, Token shape=3, Finiteness=4, Per-line pricing=5, Overflow guard=6, All-or-nothing=7). The two delta-only requirements are marked FR-BULK-8 (umbrella) and FR-BULK-9 (tests) as explicitly delta-proposed, not yet in PRD.md. \u00a710.2 corrected to state PRD.md already documents FR-BULK-1..7 and this delta proposes 8/9 for the next PRD refresh.",
+      "sections": ["\u00a76", "\u00a710.2"]
+    },
+    {
+      "id": "GAP-DIFF-002",
+      "priority": "MEDIUM",
+      "resolution": "\u00a76 subsection retitled from 'Modified non-functional requirements' to 'New / extended non-functional considerations', with a note that no PRD.md \u00a78 NFR is modified \u2014 consistent with \u00a71's 'Modified features: 0'.",
+      "sections": ["\u00a76"]
+    },
+    {
+      "id": "GAP-DIFF-003",
+      "priority": "LOW",
+      "resolution": "\u00a77 rollback plan now names the actual four-commit range (fcd74b2..e6e6a8d) and adds the caveat that 2257de0 also touches the shared priceWidget used by /price, with guidance on partial revert.",
+      "sections": ["\u00a77"]
+    },
+    {
+      "id": "GAP-DIFF-004",
+      "priority": "LOW",
+      "resolution": "\u00a76 Backward compatibility now declares the five /price/bulk error strings part of the contract (asserted verbatim by src/app.test.js); \u00a710.3 cross-references this.",
+      "sections": ["\u00a76", "\u00a710.3"]
+    }
+  ],
+  "resolved_open_questions": [
+    { "id": "Q1", "topic": "response envelope", "resolution": "{ total: <sum> }, rounded once", "source": "src/app.js:67" },
+    { "id": "Q2", "topic": "invalid-line / NaN handling", "resolution": "all-or-nothing 400; stricter than /price", "source": "src/app.js:47,54" },
+    { "id": "Q2a", "topic": "aggregate overflow", "resolution": "running-sum guard, 400 total is too large", "source": "src/app.js:63" },
+    { "id": "Q3", "topic": "item cap", "resolution": "50 (MAX_BULK_ITEMS)", "source": "src/app.js:31,41" },
+    { "id": "Q4", "topic": "empty/missing items", "resolution": "400 items is required", "source": "src/app.js:37" },
+    { "id": "Q5", "topic": "delimiter / URL-encoding", "resolution": ", between items, : between fields; README guidance", "source": "README.md" },
+    { "id": "Q6", "topic": "rounding", "resolution": "round once at end (+total.toFixed(2))", "source": "src/app.js:67" }
+  ],
+  "input_documents": ["/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/hershbhargava/cw-test-brownfield/issues/issue-1.json"],
+  "files_created": [
+    "docs/requirements/PRD_DELTA_issue-1.md",
+    "work-in-progress/issue-1/external-memory/prd/iteration-6/metadata.json",
+    "work-in-progress/issue-1/external-memory/prd/iteration-6/GITHUB_COMMENT.md"
+  ],
+  "commit_hash": null
+}
