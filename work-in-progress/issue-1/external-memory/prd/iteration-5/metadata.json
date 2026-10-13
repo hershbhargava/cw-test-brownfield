@@ -1,0 +1,56 @@
+{
+  "iteration": 5,
+  "role": "prd-generator-ai",
+  "status": "completed",
+  "workflow_mode": "new_feature_or_bug_fix",
+  "timestamp": "2026-10-13T21:38:06Z",
+  "prd_name": "Add bulk pricing endpoint [refreshed via broker]",
+  "design_mode": "NEW_FEATURE_OR_BUG_FIX",
+  "depth_mode": "detailed",
+  "scores": {
+    "coverage_score": 99,
+    "answer_quality_score": 97,
+    "confidence_score": 98,
+    "quality_score": 98
+  },
+  "word_count": 2897,
+  "sections_count": 10,
+  "assumptions_count": 0,
+  "open_questions_count": 0,
+  "input_documents": [
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/hershbhargava/cw-test-brownfield/issues/issue-1.json",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/requirements/PRD.md",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/requirements/PRD_issue-1-QandA.md",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/docs/requirements/PRD_DELTA_issue-1.md",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/src/app.js",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/src/app.test.js",
+    "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/README.md"
+  ],
+  "files_created": [
+    "docs/requirements/PRD_DELTA_issue-1.md",
+    "work-in-progress/issue-1/external-memory/prd/iteration-5/metadata.json",
+    "work-in-progress/issue-1/external-memory/prd/iteration-5/GITHUB_COMMENT.md"
+  ],
+  "change_summary": {
+    "note": "Iteration 5 refreshes the PRD DIFF to reflect that GET /price/bulk is now implemented and shipped (src/app.js) with full test coverage (src/app.test.js, 39 runtime tests). The stale iteration-2 PRD_DELTA described the endpoint as to-be-built with 6 OPEN questions; all are now RESOLVED by the delivered code and the baseline Q&A.",
+    "delta_edits": [
+      "Header bumped to iteration 5 with an explicit status-change note (to-be-built -> shipped)",
+      "Section 4 reframed as SHIPPED with a before/after table of resolved decisions and a delivered behaviour walkthrough",
+      "Added US-BULK-2 (fail-fast error handling) with code-verified acceptance criteria",
+      "Section 6 expanded FR-BULK-1..6 -> FR-BULK-1..9 to match delivered guards (item cap, items-required, aggregate-overflow, all-or-nothing)",
+      "Section 9: Q1-Q6 (+Q2a) moved from OPEN to RESOLVED with src/app.js line references; open_questions now 0",
+      "Section 10 API-surface table updated to the shipped error contract"
+    ],
+    "substantive_requirement_changes": "none (documentation caught up to already-shipped code)"
+  },
+  "resolved_open_questions": [
+    { "id": "Q1", "topic": "response envelope", "resolution": "{ total: <sum> }, rounded once; no per-line breakdown", "source": "src/app.js:67; Q&A Q6" },
+    { "id": "Q2", "topic": "invalid-line / NaN handling", "resolution": "all-or-nothing 400; NaN/Infinity rejected (stricter than /price)", "source": "src/app.js:47,54; Q&A Q2" },
+    { "id": "Q2a", "topic": "aggregate overflow", "resolution": "running-sum finiteness guard -> 400 total is too large", "source": "src/app.js:63; Q&A Q2a" },
+    { "id": "Q3", "topic": "item cap", "resolution": "MAX_BULK_ITEMS = 50", "source": "src/app.js:31,41" },
+    { "id": "Q4", "topic": "empty/missing items", "resolution": "400 items is required (incl. non-string/repeated param)", "source": "src/app.js:37" },
+    { "id": "Q5", "topic": "delimiter / URL-encoding", "resolution": "',' items, ':' fields; README advises URL-encoding", "source": "README.md" },
+    { "id": "Q6", "topic": "rounding", "resolution": "round once at end (+total.toFixed(2))", "source": "src/app.js:67" }
+  ],
+  "commit_hash": "26a7e7e96b65bcac8a7b12e7c1eb791f8c20d442"
+}
