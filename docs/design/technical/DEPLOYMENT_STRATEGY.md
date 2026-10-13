@@ -23,8 +23,13 @@
 ## Test
 
 - **Command**: `npm run test` → `node --test src/` (built-in Node test runner).
-- **Coverage**: unit tests target the `priceWidget` pure function only
-  (`src/app.test.js`). There are no HTTP/integration tests.
+- **Coverage**: `src/app.test.js` has 39 runtime tests (`node --test`). 3 are pure
+  unit tests of `priceWidget`; the remaining 36 are HTTP/integration tests driven
+  through a `withServer` harness that binds the real Express `app` to an ephemeral
+  port and exercises `/health`, `/price`, and `/price/bulk` over `fetch` (added
+  during issue #1 — see `../TDD.md` §D9). Coverage: 100% line / 96.55% branch /
+  100% function (`src/app.js`; sole uncovered branch is the `require.main ===
+  module` entrypoint guard, which is exercised by `npm run start`, not by tests).
 
 ## Environment / Config
 
