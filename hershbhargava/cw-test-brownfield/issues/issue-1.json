@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "downloaded_at": "2026-10-13T22:22:42.630Z",
+    "downloaded_at": "2026-10-13T22:35:15.684Z",
     "owner": "hershbhargava",
     "repository": "cw-test-brownfield",
     "issue_number": "1",
@@ -8,7 +8,7 @@
     "save_location": "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/hershbhargava/cw-test-brownfield/issues",
     "issue_file_path": "/persistent/git-workspaces/hershbhargava/cw-test-brownfield/issue-1/repos/hershbhargava/cw-test-brownfield/hershbhargava/cw-test-brownfield/issues/issue-1.json",
     "max_comments": 1,
-    "total_comments": 25,
+    "total_comments": 26,
     "comments_included": 1
   },
   "issue": {
@@ -60,9 +60,9 @@
     "locked": false,
     "assignees": [],
     "milestone": null,
-    "comments": 25,
+    "comments": 26,
     "created_at": "2026-08-25T01:30:08Z",
-    "updated_at": "2026-10-13T22:17:32Z",
+    "updated_at": "2026-10-13T22:26:24Z",
     "closed_at": null,
     "assignee": null,
     "author_association": "OWNER",
@@ -99,11 +99,11 @@
   },
   "comments": [
     {
-      "url": "https://api.github.com/repos/hershbhargava/cw-test-brownfield/issues/comments/6156388234",
-      "html_url": "https://github.com/hershbhargava/cw-test-brownfield/issues/1#issuecomment-6156388234",
+      "url": "https://api.github.com/repos/hershbhargava/cw-test-brownfield/issues/comments/6156539000",
+      "html_url": "https://github.com/hershbhargava/cw-test-brownfield/issues/1#issuecomment-6156539000",
       "issue_url": "https://api.github.com/repos/hershbhargava/cw-test-brownfield/issues/1",
-      "id": 6156388234,
-      "node_id": "IC_kwDOUDOaqc8AAAABbvMHig",
+      "id": 6156539000,
+      "node_id": "IC_kwDOUDOaqc8AAAABbvVUeA",
       "user": {
         "login": "hershbhargava",
         "id": 22163465,
@@ -125,13 +125,13 @@
         "user_view_type": "public",
         "site_admin": false
       },
-      "created_at": "2026-10-13T22:17:32Z",
-      "updated_at": "2026-10-13T22:17:32Z",
-      "body": "## Architecture Review (TDD_DELTA) — Issue #1, Iteration 4\n\n**Outcome: PASS_WITH_MINOR_GAPS** · Weighted score **84/100** (Good)\n\n### Summary\nThe architecture delta for `/price/bulk` (`TDD.md` §D1–D11) is complete, correct,\nand fully traceable to the shipped code. All 9 PRD_DELTA requirements map to a\ndesign element, all 6 open design questions are resolved with sound rationale,\nand the two-layer finite-total invariant (per-line + aggregate overflow guard)\nis a genuinely careful piece of design, implemented in `src/app.js` exactly as\nspecified and locked in by a dedicated test. **No functional/design gaps found.**\n\n### Gaps found (3 — all documentation-propagation, not design defects)\n\n| ID | Priority | Issue |\n|---|---|---|\n| GAP-DIFF-001 | HIGH | `SYSTEM_ARCHITECTURE.md` was never updated for the new route — still says \"two HTTP GET endpoints,\" diagram/request-flow sections have no `/price/bulk` entry. |\n| GAP-DIFF-002 | MEDIUM | `API_CONTRACTS.md` §3's status banner still says \"Designed (not yet implemented),\" contradicting the TDD's own \"Implementation-complete\" claim and the shipped/tested code. Contract body itself is accurate. |\n| GAP-DIFF-003 | MEDIUM | `SECURITY_DESIGN.md`'s threat-surface table doesn't reflect the two new controls this delta adds (finiteness guard, 50-item cap), even though `TDD.md` §D7 reasons about both correctly. |\n\nAll three are mechanical doc edits to the sibling \"detailed view\" documents that\n`TDD.md` delegates to — no re-architecture is needed, and none affect the\ncorrectness of the shipped implementation.\n\nFull detail: `GAP_ANALYSIS.md` · Per-dimension scoring: `ARCHITECTURE_QUALITY.md`\n\n### Recommendation\nSync the three listed documents with the current shipped state, then this delta\nis ready to stand as the authoritative architecture record. No further\narchitecture re-review iteration is required.\n",
+      "created_at": "2026-10-13T22:26:23Z",
+      "updated_at": "2026-10-13T22:26:23Z",
+      "body": "## 📋 PRD DIFF Iteration 6 — Add bulk pricing endpoint [refreshed via broker]\n\n**Mode**: New Feature / Bug Fix\n**Issue**: #1\n**Branch**: `feature/issue-1`\n\n### What this iteration covers\n\nA review-follow-up pass that resolves the four gaps raised in PRD review iteration 4\nagainst the iteration-5 delta. No new product behavior — `GET /price/bulk` is already\nshipped and tested (39/39, 100% line coverage); this tightens the delta's accuracy and\ncross-document consistency.\n\n### Key decisions\n\n- **GAP-DIFF-001 (HIGH) fixed**: the delta's Functional-Requirement IDs now **reuse\n  `PRD.md` §7's authoritative `FR-BULK-1..7` numbering verbatim** (so \"FR-BULK-6\" means\n  the same requirement in both docs). The two delta-only items are relabeled\n  `FR-BULK-8` (umbrella) / `FR-BULK-9` (tests) and explicitly marked *delta-proposed*;\n  §10.2 no longer claims `PRD.md` already \"gains\" them.\n- **GAP-DIFF-002 (MEDIUM) fixed**: NFR subsection retitled \"New / extended\n  non-functional considerations\" — consistent with \"Modified features: 0\".\n- **GAP-DIFF-003 (LOW) fixed**: rollback plan now names the real 4-commit range\n  (`fcd74b2`..`e6e6a8d`) with a caveat that `2257de0` also touches shared `priceWidget`.\n- **GAP-DIFF-004 (LOW) fixed**: the five `/price/bulk` error strings are now declared\n  part of the contract (asserted verbatim by `src/app.test.js`).\n\n### Open questions for the reviewer\n\n- None. All six prior open questions remain RESOLVED against shipped code; the four\n  review gaps are now closed.\n- **Follow-up for `PRD.md` owner (not blocking)**: fold `FR-BULK-8`/`FR-BULK-9` into\n  `PRD.md` §7 on its next refresh so the two docs stay in lockstep.\n\n### Files in this iteration\n\n- `docs/requirements/PRD_DELTA_issue-1.md` — full change spec (10 sections, ~3.5k words)\n- `external-memory/prd/iteration-6/metadata.json` — machine-readable metrics\n- `external-memory/prd/iteration-6/GITHUB_COMMENT.md` — this comment\n\n### Next step\n\nRe-run prd-reviewer-workflow (review iteration 5) to confirm GAP-DIFF-001..004 are\nclosed, then hand off to architect / implementation sign-off.\n",
       "author_association": "OWNER",
       "pin": null,
       "reactions": {
-        "url": "https://api.github.com/repos/hershbhargava/cw-test-brownfield/issues/comments/6156388234/reactions",
+        "url": "https://api.github.com/repos/hershbhargava/cw-test-brownfield/issues/comments/6156539000/reactions",
         "total_count": 0,
         "+1": 0,
         "-1": 0,

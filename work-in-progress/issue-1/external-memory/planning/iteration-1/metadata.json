@@ -1,0 +1,61 @@
+{
+  "workflow": "decomposition-planner-workflow",
+  "iteration": 1,
+  "mode": "NEW",
+  "timestamp": "2026-10-13T22:35:00Z",
+  "initiative": {
+    "title": "Add bulk pricing endpoint",
+    "issue": "#1",
+    "kind": "new_feature"
+  },
+  "sources": {
+    "prd": "docs/requirements/PRD_DELTA_issue-1.md",
+    "tdd": "docs/design/TDD.md (Architecture Delta §D1-D11)",
+    "issue": "GitHub issue #1"
+  },
+  "stacks": ["nodejs"],
+  "backlog": {
+    "total_slices": 3,
+    "slice_ids": ["B1", "B2", "B3"],
+    "estimates": {
+      "B1": "M · ~2-3 days",
+      "B2": "S · ~1-2 days",
+      "B3": "M · ~2 days"
+    },
+    "total_estimate": "~5-7 days",
+    "critical_path_length": 3
+  },
+  "slice_summary": [
+    {
+      "id": "B1",
+      "title": "Basic bulk pricing endpoint with multi-line summation",
+      "stacks": ["nodejs"],
+      "estimate": "M · ~2-3 days",
+      "depends_on": []
+    },
+    {
+      "id": "B2",
+      "title": "Comprehensive input validation and error handling",
+      "stacks": ["nodejs"],
+      "estimate": "S · ~1-2 days",
+      "depends_on": ["B1"]
+    },
+    {
+      "id": "B3",
+      "title": "Non-finite input hardening and aggregate overflow guard",
+      "stacks": ["nodejs"],
+      "estimate": "M · ~2 days",
+      "depends_on": ["B2"]
+    }
+  ],
+  "notes": [
+    "This is a retroactive decomposition plan. The feature was already implemented and shipped in commits fcd74b2..e6e6a8d.",
+    "All slices are single-stack (nodejs only) with sequential dependencies.",
+    "The plan demonstrates how the work could have been incrementally decomposed: happy path → validation → edge-case hardening.",
+    "Actual implementation achieved 100% line coverage with 39/39 tests passing."
+  ],
+  "outputs": {
+    "implementation_plan": "work-in-progress/issue-1/external-memory/planning/iteration-1/implementation-plan.md",
+    "metadata": "work-in-progress/issue-1/external-memory/planning/iteration-1/metadata.json"
+  }
+}
