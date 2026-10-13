@@ -74,9 +74,11 @@ app.get('/price', (req, res) => {
 
 ### 3. `GET /price/bulk` *(added — issue #1, see TDD.md §D4/§D6)*
 
-> **Status**: Designed (not yet implemented). Contract fixed by the architecture
-> delta in `../TDD.md` (Architecture Delta §D3–D6). This is a **new, additive**
-> route — `/price` and `/health` above are unchanged.
+> **Status**: Implemented and shipped (issue #1, iteration 4). The contract below
+> matches `src/app.js:32-71` and is verified by the `/price/bulk` test cases in
+> `src/app.test.js`. Fixed by the architecture delta in `../TDD.md` (Architecture
+> Delta §D3–D6). This is a **new, additive** route — `/price` and `/health` above
+> are unchanged.
 
 Computes the **summed** discounted total across multiple line items in one request,
 pricing each line with the existing `priceWidget` (10% discount at `qty ≥ 100`).

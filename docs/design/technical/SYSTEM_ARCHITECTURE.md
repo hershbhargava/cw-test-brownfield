@@ -6,10 +6,12 @@
 ## 1. Overview
 
 `widget-service` is a single-process, stateless HTTP microservice written in
-JavaScript on Node.js using the Express 4 framework. It exposes two HTTP `GET`
-endpoints for a liveness check and for computing a discounted widget price. There
-is no persistence layer, no authentication, no external service dependency, and no
-background/async work — the entire runtime is one small Express app.
+JavaScript on Node.js using the Express 4 framework. It exposes three HTTP `GET`
+endpoints: a liveness check (`/health`), a single-line discounted widget price
+(`/price`), and a bulk/multi-line summed price (`/price/bulk`, added for issue #1 —
+see `../TDD.md` §D4). There is no persistence layer, no authentication, no external
+service dependency, and no background/async work — the entire runtime is one small
+Express app.
 
 - **Name / version**: `widget-service` v1.2.0 (`package.json`)
 - **Runtime**: Node.js, CommonJS modules (`require`/`module.exports`)
@@ -35,24 +37,29 @@ inline in `src/app.js`.
 ## 3. Component Boundaries (as implemented)
 
 ```
-                 ┌───────────────────────────────────────────┐
-   HTTP client ──▶  Express app (src/app.js)                  │
-   (GET only)   │   ┌───────────────┐   ┌───────────────────┐ │
-                │   │ GET /health   │   │ GET /price        │ │
-                │   │ → {ok:true}   │   │ → priceWidget()   │ │
-                │   └───────────────┘   └─────────┬─────────┘ │
-                │                                  ▼           │
-                │                        priceWidget(qty,unit) │
-                │                        (pure function)       │
-                └───────────────────────────────────────────┘
+                 ┌─────────────────────────────────────────────────────────────┐
+   HTTP client ──▶  Express app (src/app.js)                                    │
+   (GET only)   │   ┌───────────────┐ ┌───────────────┐ ┌───────────────────┐  │
+                │   │ GET /health   │ │ GET /price    │ │ GET /price/bulk   │  │
+                │   │ → {ok:true}   │ │ → priceWidget │ │ → priceWidget per │  │
+                │   │               │ │   (qty,unit)  │ │   line, sum (≤50) │  │
+                │   └───────────────┘ └───────┬───────┘ └─────────┬─────────┘  │
+                │                             │                   │            │
+                │                             ▼                   ▼            │
+                │                      priceWidget(qty,unit)  ◀────┘            │
+                │                      (pure function — now 2 callers)         │
+                └─────────────────────────────────────────────────────────────┘
                           (no DB, no cache, no downstream calls)
 ```
 
-- **HTTP layer**: two Express route handlers registered directly on the `app`
-  instance (`app.get('/health', ...)`, `app.get('/price', ...)`).
+- **HTTP layer**: three Express route handlers registered directly on the `app`
+  instance (`app.get('/health', ...)`, `app.get('/price', ...)`,
+  `app.get('/price/bulk', ...)`).
 - **Domain logic**: `priceWidget(qty, unitPrice)` — a pure, side-effect-free
   function that predates the current tooling adoption (comment in `src/app.js`:
-  "Existing business logic — pre-dates CoWeave adoption.").
+  "Existing business logic — pre-dates CoWeave adoption."). It now has **two
+  callers**: the `/price` handler (once per request) and the `/price/bulk` handler
+  (once per line item, up to `MAX_BULK_ITEMS = 50`).
 - **No data-access layer** — nothing is persisted or read from storage.
 
 ## 4. Request Flow
@@ -65,6 +72,28 @@ inline in `src/app.js`.
 4. On success responds `200` with `{ total: <number> }`.
 5. On thrown error responds `400` with `{ error: <message> }`.
 
+### `GET /price/bulk?items=qty:unit,...`
+1. Express matches the route in `src/app.js`.
+2. Handler reads `req.query.items`. If it is not a non-empty string (missing, empty,
+   or coerced to an array/object by a repeated/bracket param), responds `400` with
+   `{ error: "items is required" }`.
+3. Splits `items` on `,` into tokens. If the token count exceeds `MAX_BULK_ITEMS`
+   (50), responds `400` with `{ error: "too many items (max 50)" }`.
+4. Iterates each token (all-or-nothing — any failure rejects the whole request):
+   a. Splits the token on `:`; if it is not exactly two parts, responds `400` with
+      `{ error: "invalid item '<token>'" }`.
+   b. Coerces `qty`/`unit` with `Number(...)`; if either is `NaN` or non-finite
+      (`±Infinity`, e.g. `1e400`), responds `400` with `{ error: "invalid item
+      '<token>'" }` (stricter than `/price` by design — see `../TDD.md` §D3/Q2).
+   c. Prices the line via `priceWidget(qty, unit)` inside the handler's `try/catch`
+      (so a `qty <= 0` throw surfaces as `400 { error: "qty must be positive" }`)
+      and adds the result to a running sum.
+   d. Re-validates the running sum with `Number.isFinite`; if it overflows to
+      `Infinity`, responds `400` with `{ error: "total is too large" }` (the
+      aggregate-overflow guard — `../TDD.md` §D3/Q2a).
+5. On success responds `200` with `{ total: +sum.toFixed(2) }` (rounded once at the
+   end).
+
 ### `GET /health`
 1. Express matches the route.
 2. Responds `200` with `{ ok: true }`. No dependency checks are performed — it is a
@@ -73,6 +102,10 @@ inline in `src/app.js`.
 ## 5. Business Rule (`priceWidget`)
 
 Implemented in `src/app.js` → `priceWidget`:
+- Rejects non-finite input: a `qty` or `unitPrice` that is a non-`NaN` non-finite
+  number (`±Infinity`) throws `Error('qty and unit must be finite')` (added for
+  issue #1 — `../TDD.md` §D2a; `NaN` is intentionally left to pass through so
+  `/price` keeps its documented `NaN → { total: null }, 200` behavior).
 - Rejects non-positive quantity: `if (qty <= 0) throw new Error('qty must be positive')`.
 - Applies a **10% discount when `qty >= 100`**, otherwise no discount.
 - Returns `qty * unitPrice * (1 - discount)` rounded to 2 decimals
