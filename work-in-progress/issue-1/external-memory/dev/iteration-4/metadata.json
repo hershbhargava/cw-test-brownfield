@@ -33,6 +33,6 @@
     "thresholds_lowered": false,
     "note": "Documentation-only iteration; no gate/threshold/lint/test-script changes."
   },
-  "commit_hash": "<filled_after_commit>",
+  "commit_hash": "5f8b8859842ef6f1f2fcb93b8404ba72be5a87f7",
   "iteration_mode": "AUTO"
 }
